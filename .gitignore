@@ -1,0 +1,10 @@
+# Django
+.env
+
+# PyCharm
+.idea/
+
+# Python
+*.pyc
+__pycache__/
+venv/
