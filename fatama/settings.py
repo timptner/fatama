@@ -140,7 +140,7 @@ LOGGING = {
             'formatter': 'verbose',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': BASE_DIR / 'django.log',
-            'maxBytes': 1024,
+            'maxBytes': 10**7,  # 10 MB
             'backupCount': 1,
         },
         'mail': {

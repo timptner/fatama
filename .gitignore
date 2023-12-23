@@ -1,6 +1,6 @@
 # Django
 .env
-django.log
+django.log*
 
 # PyCharm
 .idea/
