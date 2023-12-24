@@ -1,11 +1,10 @@
-from django.views.generic import DetailView
+from django.views.generic import TemplateView
 
 from accounts.models import Profile
 
+class ProfileView(TemplateView):
+    template_name = 'accounts/profile.html'
 
-class ProfileView(DetailView):
-    model = Profile
-    template_name = 'accounts/user_detail.html'
 
     def get_object(self, queryset=None):
         return self.request.user
