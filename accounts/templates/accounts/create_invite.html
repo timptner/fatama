@@ -1,0 +1,19 @@
+{% extends 'fatama/base.html' %}
+
+{% block page %}
+    <section class="section">
+        <div class="container is-max-desktop">
+            <h3 class="title">Einladung erstellen</h3>
+
+            <form method="post">
+                {{ form }}
+
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">Einladen</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}
