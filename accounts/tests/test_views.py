@@ -3,7 +3,7 @@ import secrets
 from datetime import timedelta
 
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -14,6 +14,8 @@ from accounts.models import Invite
 class InviteViewTest(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create_user('john')
+        can_invite = Permission.objects.get(codename='can_invite')
+        self.user.user_permissions.add(can_invite)
         self.path = reverse('accounts:create_invite')
 
     def test_view(self) -> None:
@@ -24,7 +26,7 @@ class InviteViewTest(TestCase):
     def test_user_view(self) -> None:
         self.client.force_login(self.user)
         response = self.client.get(self.path)
-        self.assertEqual(response.status_code, 403)
+        self.assertContains(response, "Einladung erstellen")
 
 
 class LoginViewTest(TestCase):
