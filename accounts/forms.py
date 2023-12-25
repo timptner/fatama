@@ -3,6 +3,7 @@ import secrets
 from datetime import datetime, timedelta
 
 from django import forms
+from django.contrib.auth import forms as auth_forms
 from django.core.mail import send_mail
 
 from accounts.models import Invite
@@ -40,3 +41,10 @@ du wurdest von {sender} eingeladen, dich für die Fachschaftentagung Maschinenba
             None,
             [recipient],
         )
+
+
+class AuthenticationForm(auth_forms.AuthenticationForm):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.fields['username'].widget.attrs.update({'class': 'input'})
+        self.fields['password'].widget.attrs.update({'class': 'input'})

@@ -1,7 +1,13 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth import views as auth_views
 from django.views.generic import TemplateView, CreateView
 
-from accounts.forms import InviteForm
+from accounts.forms import InviteForm, AuthenticationForm
+
+
+class LoginView(auth_views.LoginView):
+    form_class = AuthenticationForm
+    template_name = 'accounts/login.html'
 
 
 class ProfileView(TemplateView):

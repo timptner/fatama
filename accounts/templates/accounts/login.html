@@ -1,0 +1,25 @@
+{% extends 'fatama/base.html' %}
+
+{% block page %}
+    <section class="hero is-fullheight">
+        <div class="hero-body">
+            <div class="container">
+                <div class="columns is-centered">
+                    <div class="column is-one-quarter">
+                        <form method="post">
+                            {% csrf_token %}
+
+                            {{ form }}
+
+                            <div class="field is-grouped">
+                                <div class="control">
+                                    <button class="button is-primary" type="submit">Anmelden</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
