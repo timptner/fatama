@@ -1,13 +1,13 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
-from django.contrib.auth import login, views as auth_views
+from django.contrib.auth import logout, views as auth_views
 from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView
 
-from accounts.forms import AuthenticationForm, InviteForm, RegistrationForm
+from accounts.forms import AuthenticationForm, InviteForm, ProfileForm, SetPasswordForm, UserForm
 from accounts.models import Invite
 
 
@@ -69,26 +69,38 @@ class ProfileView(LoginRequiredMixin, TemplateView):
     template_name = 'accounts/profile.html'
 
 
-class RegistrationView(CreateView):
-    form_class = RegistrationForm
-    template_name = 'accounts/registration.html'
-    success_url = reverse_lazy('accounts:profile')
+def registration(request, token):
+    invite = get_object_or_404(Invite, token=token)
+    if invite.is_expired():
+        raise PermissionDenied("Invite is expired.")
+    if request.method == 'POST':
+        user_form = UserForm(data=request.POST, prefix='user')
+        password_form = SetPasswordForm(data=request.POST, user=None, prefix='password')
+        profile_form = ProfileForm(data=request.POST, user=None, prefix='profile')
+        if user_form.is_valid() and password_form.is_valid() and profile_form.is_valid():
+            user = user_form.save()
+            logout(request)
+            invite.delete()
 
-    def get(self, request, *args, **kwargs):
-        if self.request.user.is_authenticated:
+            password_form.user = user
+            password_form.save()
+
+            profile_form.user = user
+            profile_form.save()
+
+            return redirect(reverse_lazy('accounts:login'))
+    else:
+        if request.user.is_authenticated:
             message = ("Aktuell ist der Benutzer "
-                       f"<strong>{self.request.user}</strong> angemeldet. Bei "
+                       f"<strong>{request.user}</strong> angemeldet. Bei "
                        "Abschluss der Registrierung wird der aktive Benutzer "
-                       "abgemeldet und der neue Benutzer stattdessen "
-                       "angemeldet.")
-            messages.warning(self.request, message)
-        token = self.kwargs.get('token')
-        invite = get_object_or_404(Invite, token=token)
-        if invite.is_expired():
-            raise PermissionDenied("Invite is expired.")
-        return super().get(request, *args, **kwargs)
-
-    def form_valid(self, form):
-        response = super().form_valid(form)
-        login(self.request, self.object)
-        return response
+                       "abgemeldet.")
+            messages.warning(request, message)
+        password_form = SetPasswordForm(None, prefix='password')
+        profile_form = ProfileForm(None, prefix='profile')
+        user_form = UserForm(prefix='user')
+    return render(request, 'accounts/registration.html', {
+        'password_form': password_form,
+        'profile_form': profile_form,
+        'user_form': user_form,
+    })

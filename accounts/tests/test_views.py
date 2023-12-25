@@ -85,12 +85,13 @@ class RegistrationViewTest(TestCase):
 
     def test_post_view(self) -> None:
         data = {
-            'username': 'jane',
-            'first_name': 'Jane',
-            'last_name': 'Doe',
-            'email': 'jane.doe@example.org',
-            'password1': 'super53cre7',
-            'password2': 'super53cre7',
+            'profile-university': 'Otto-von-Guericke-University Magdeburg',
+            'user-username': 'jane',
+            'user-first_name': 'Jane',
+            'user-last_name': 'Doe',
+            'user-email': 'jane.doe@example.org',
+            'password-new_password1': 'super53cre7',
+            'password-new_password2': 'super53cre7',
         }
         response = self.client.post(self.path, data=data)
-        self.assertRedirects(response, reverse('accounts:profile'))
+        self.assertRedirects(response, reverse('accounts:login'))

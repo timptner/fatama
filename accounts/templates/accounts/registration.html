@@ -16,7 +16,11 @@
             <form method="post">
                 {% csrf_token %}
 
-                {{ form }}
+                {{ profile_form }}
+
+                {{ user_form }}
+
+                {{ password_form }}
 
                 <div class="field is-grouped">
                     <div class="control">

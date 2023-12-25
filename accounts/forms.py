@@ -6,11 +6,9 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
-from django.contrib.auth import password_validation
 from django.utils import timezone
 
-from accounts.models import Invite
+from accounts.models import Invite, Profile
 
 
 class AuthenticationForm(auth_forms.AuthenticationForm):
@@ -44,19 +42,34 @@ class InviteForm(forms.ModelForm):
         return invite
 
 
-class RegistrationForm(forms.ModelForm):
-    password1 = forms.CharField(
-        label="Passwort",
-        widget=forms.PasswordInput(attrs={'class': 'input', "autocomplete": "new-password"}),
-        strip=False,
-        help_text=password_validation.password_validators_help_text_html(),
-    )
-    password2 = forms.CharField(
-        label="Passwort bestätigen",
-        widget=forms.PasswordInput(attrs={'class': 'input', "autocomplete": "new-password"}),
-        strip=False,
-    )
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['university']
+        widgets = {
+            'university': forms.TextInput(attrs={'class': 'input'})
+        }
 
+    def __init__(self, user, *args, **kwargs):
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        profile = super().save(commit=False)
+        profile.user = self.user
+        if commit:
+            profile.save()
+        return profile
+
+
+class SetPasswordForm(auth_forms.SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['new_password1'].widget.attrs.update({'class': 'input'})
+        self.fields['new_password2'].widget.attrs.update({'class': 'input'})
+
+
+class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email']
@@ -78,26 +91,3 @@ class RegistrationForm(forms.ModelForm):
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
         self.fields['email'].required = True
-
-    def clean_password1(self) -> str:
-        password1 = self.cleaned_data.get('password1')
-        password_validation.validate_password(password1)
-        return password1
-
-    def clean(self) -> None:
-        cleaned_data = super().clean()
-        password1 = cleaned_data.get('password1')
-        password2 = cleaned_data.get('password2')
-        if password1 and password2 and password1 != password2:
-            error = ValidationError("Die Passwörter sind nicht identisch.", code='distinct_passwords')
-            self.add_error('password2', error)
-
-    def save(self, commit: bool = True) -> User:
-        if not commit:
-            raise NotImplementedError("Must commit user object to set new password afterwards.")
-        password = self.cleaned_data['password1']
-        user: User = super().save(commit=False)
-        user.set_password(password)
-        user.is_active = True
-        user.save()
-        return user
