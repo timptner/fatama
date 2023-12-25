@@ -1,0 +1,23 @@
+<nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="container">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="/">FaTaMa 2024</a>
+
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="mainNavbar">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div id="mainNavbar" class="navbar-menu">
+            <div class="navbar-end">
+                {% if user.is_authenticated %}
+                    <a class="navbar-item" href="{% url 'accounts:profile' %}">Konto</a>
+                {% else %}
+                    <a class="navbar-item" href="{% url 'accounts:login' %}">Anmelden</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</nav>

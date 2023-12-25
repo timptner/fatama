@@ -1,0 +1,35 @@
+{% extends 'fatama/base.html' %}
+
+{% block content %}
+    <section class="section">
+        <div class="container is-max-desktop">
+            <div class="columns">
+                <div class="column is-narrow">
+                    <aside class="menu">
+                        <p class="menu-label">Konto</p>
+                        <ul class="menu-list">
+                            <li><a href="{% url 'accounts:profile' %}">Profil</a></li>
+                            <li><a href="{% url 'accounts:logout' %}">Abmelden</a></li>
+                        </ul>
+
+                        {% if user.is_staff %}
+                            <p class="menu-label">Verwaltung</p>
+                            <ul class="menu-list">
+                                <li>
+                                    {% if perms.accounts.can_invite %}
+                                        <a href="{% url 'accounts:create_invite' %}">Einladen</a>
+                                    {% else %}
+                                        <a>Einladen <i class="fa-solid fa-lock"></i></a>
+                                    {% endif %}
+                                </li>
+                            </ul>
+                        {% endif %}
+                    </aside>
+                </div>
+                <div class="column">
+                    {% block subcontent %}{% endblock %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

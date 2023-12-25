@@ -1,19 +1,17 @@
-{% extends 'fatama/base.html' %}
+{% extends 'accounts/base.html' %}
 
-{% block page %}
-    <section class="section">
-        <div class="container is-max-desktop">
-            <p class="block">Bitte bestätige, dass du dich abmelden möchtest.</p>
+{% block subcontent %}
+    <h3 class="title">Abmelden</h3>
 
-            <form method="post">
-                {% csrf_token %}
+    <p class="block">Bitte bestätige, dass du dich abmelden möchtest.</p>
 
-                <div class="field is-grouped">
-                    <div class="control">
-                        <button class="button is-danger" type="submit">Abmelden</button>
-                    </div>
-                </div>
-            </form>
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="field is-grouped">
+            <div class="control">
+                <button class="button is-danger" type="submit">Abmelden</button>
+            </div>
         </div>
-    </section>
+    </form>
 {% endblock %}

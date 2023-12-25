@@ -1,19 +1,15 @@
-{% extends 'fatama/base.html' %}
+{% extends 'accounts/base.html' %}
 
-{% block page %}
-    <section class="section">
-        <div class="container is-max-desktop">
-            <h3 class="title">Einladung erstellen</h3>
+{% block subcontent %}
+    <h3 class="title">Einladung erstellen</h3>
 
-            <form method="post">
-                {{ form }}
+    <form method="post">
+        {{ form }}
 
-                <div class="field is-grouped">
-                    <div class="control">
-                        <button type="submit" class="button is-primary">Einladen</button>
-                    </div>
-                </div>
-            </form>
+        <div class="field is-grouped">
+            <div class="control">
+                <button type="submit" class="button is-primary">Einladen</button>
+            </div>
         </div>
-    </section>
+    </form>
 {% endblock %}
