@@ -1,0 +1,29 @@
+{% extends 'fatama/base.html' %}
+
+{% block page %}
+    <section class="section">
+        <div class="container is-max-desktop">
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="notification{% if message.tags %} {{ message.tags }}{% endif %}">
+                        {{ message|safe }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <h3 class="title">Registrieren</h3>
+
+            <form method="post">
+                {% csrf_token %}
+
+                {{ form }}
+
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">Account erstellen</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

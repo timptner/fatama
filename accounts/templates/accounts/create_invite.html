@@ -4,6 +4,8 @@
     <h3 class="title">Einladung erstellen</h3>
 
     <form method="post">
+        {% csrf_token %}
+
         {{ form }}
 
         <div class="field is-grouped">

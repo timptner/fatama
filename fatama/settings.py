@@ -2,6 +2,8 @@ import os
 
 from pathlib import Path
 
+from django.contrib.messages import constants as message_constants
+
 from fatama.cast import string_to_boolean
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -113,6 +115,43 @@ STATIC_URL = 'static/'
 # Default primary key field type
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# Registration
+
+INVITE_TOKEN_LENGTH = 10  # Bytes
+
+INVITE_EXPIRATION = 10  # Days
+
+
+# E-Mail
+
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.postmarkapp.com')
+
+EMAIL_PORT = os.getenv('EMAIL_PORT', '587')
+
+EMAIL_HOST_USER = os.getenv('EMAIL_USER')
+
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
+
+EMAIL_USE_TLS = True
+
+DEFAULT_FROM_EMAIL = 'hello@fatama2024.de'
+
+SERVER_EMAIL = 'support@fatama2024.de'
+
+
+# Messages
+
+MESSAGE_LEVEL = getattr(message_constants, os.getenv('MESSAGE_LEVEL', 'INFO'))
+
+MESSAGE_TAGS = {
+    message_constants.DEBUG: '',
+    message_constants.INFO: 'is-info',
+    message_constants.SUCCESS: 'is-success',
+    message_constants.WARNING: 'is-warning',
+    message_constants.ERROR: 'is-danger',
+}
 
 
 # Logging

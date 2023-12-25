@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.utils import timezone
 
 
 class Profile(models.Model):
@@ -24,3 +25,6 @@ class Invite(models.Model):
 
     def __str__(self) -> str:
         return self.recipient
+
+    def is_expired(self) -> bool:
+        return self.expired_at < timezone.now()
