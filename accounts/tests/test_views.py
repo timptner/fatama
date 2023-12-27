@@ -4,9 +4,12 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User, Permission
+from django.contrib.auth.tokens import default_token_generator
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 
 from accounts.models import Invite
 
@@ -55,6 +58,43 @@ class LogoutView(TestCase):
     def test_post_view(self) -> None:
         response = self.client.post(self.path)
         self.assertRedirects(response, reverse('accounts:login'))
+
+
+class PasswortResetView(TestCase):
+    def setUp(self) -> None:
+        self.path = reverse('accounts:password_reset')
+        self.user = User.objects.create_user(
+            username='john',
+            email='john.doe@example.org',
+            first_name='John',
+        )
+
+    def test_get_view(self) -> None:
+        response = self.client.get(self.path)
+        self.assertContains(response, "Passwort zurücksetzen")
+
+    def test_post_view(self) -> None:
+        data = {
+            'email': self.user.email,
+        }
+        response = self.client.post(self.path, data)
+        self.assertRedirects(response, reverse('accounts:login'))
+
+
+class PasswortResetConfirmView(TestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(username='john')
+        self.kwargs = {
+            'uidb64': urlsafe_base64_encode(force_bytes(self.user.pk)),
+            'token': default_token_generator.make_token(self.user),
+        }
+        self.path = reverse('accounts:password_reset_confirm', kwargs=self.kwargs)
+
+    def test_get_view(self) -> None:
+        response = self.client.get(self.path)
+        self.kwargs.update({'token': 'set-password'})
+        next_path = reverse('accounts:password_reset_confirm', kwargs=self.kwargs)
+        self.assertRedirects(response, next_path)
 
 
 class ProfileViewTest(TestCase):

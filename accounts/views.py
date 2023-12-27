@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth import logout, views as auth_views
 from django.core.exceptions import PermissionDenied
@@ -7,7 +8,8 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, TemplateView
 
-from accounts.forms import AuthenticationForm, InviteForm, ProfileForm, SetPasswordForm, UserForm
+from accounts.forms import (AuthenticationForm, InviteForm, PasswordResetForm,
+                            ProfileForm, SetPasswordForm, UserForm)
 from accounts.models import Invite
 
 
@@ -63,6 +65,20 @@ class LogoutView(auth_views.LogoutView):
             return render(request, 'accounts/logout.html')
         else:
             return redirect('accounts:login')
+
+
+class PasswordResetView(SuccessMessageMixin, auth_views.PasswordResetView):
+    form_class = PasswordResetForm
+    success_message = "Eine E-Mail zum Zurücksetzen des Passworts wurde an <strong>%(email)s</strong> geschickt."
+    success_url = reverse_lazy('accounts:login')
+    template_name = 'accounts/password_reset.html'
+
+
+class PasswordResetConfirm(SuccessMessageMixin, auth_views.PasswordResetConfirmView):
+    form_class = SetPasswordForm
+    success_message = "Dein Passwort wurde erfolgreich geändert."
+    success_url = reverse_lazy('accounts:login')
+    template_name = 'accounts/password_reset_confirm.html'
 
 
 class ProfileView(LoginRequiredMixin, TemplateView):

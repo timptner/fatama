@@ -6,6 +6,8 @@ from django import forms
 from django.conf import settings
 from django.contrib.auth import forms as auth_forms
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
+from django.urls import reverse_lazy
 from django.utils import timezone
 
 from accounts.models import Invite, Profile
@@ -40,6 +42,28 @@ class InviteForm(forms.ModelForm):
         if commit:
             invite.save()
         return invite
+
+
+class PasswordResetForm(auth_forms.PasswordResetForm):
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.fields['email'].widget.attrs.update({'class': 'input'})
+
+    def send_mail(self, subject_template_name, email_template_name, context,
+                  from_email, to_email, html_email_template_name=None):
+        user = context.get('user')
+        protocol = context.get('protocol')
+        domain = context.get('domain')
+        uid = context.get('uid')
+        token = context.get('token')
+        path = reverse_lazy('accounts:password_reset_confirm', kwargs={'uidb64': uid, 'token': token})
+        subject = "Password zurücksetzen"
+        body = f"""Hallo {user.first_name},
+
+du hast das Zurücksetzen deines Passworts angefordert.
+
+{protocol}://{domain}{path}"""
+        send_mail(subject, body, None, [to_email])
 
 
 class ProfileForm(forms.ModelForm):
