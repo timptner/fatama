@@ -1,0 +1,17 @@
+{% extends 'fatama/base.html' %}
+
+{% block page %}
+    <section class="hero is-fullheight">
+        <div class="hero-body">
+            <div class="container">
+                <div class="columns is-centered">
+                    <div class="column is-one-quarter">
+                        {% include 'fatama/messages_snippet.html' %}
+
+                        {% block content %}{% endblock %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

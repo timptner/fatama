@@ -1,25 +1,22 @@
-{% extends 'fatama/base.html' %}
+{% extends 'accounts/base_page.html' %}
 
-{% block page %}
-    <section class="hero is-fullheight">
-        <div class="hero-body">
-            <div class="container">
-                <div class="columns is-centered">
-                    <div class="column is-one-quarter">
-                        <form method="post">
-                            {% csrf_token %}
+{% block content %}
+    <p class="title">Anmelden</p>
 
-                            {{ form }}
+    <form method="post">
+        {% csrf_token %}
 
-                            <div class="field is-grouped">
-                                <div class="control">
-                                    <button class="button is-primary" type="submit">Anmelden</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+        {{ form }}
+
+        <div class="field is-grouped">
+            <div class="control">
+                <button class="button is-primary" type="submit">Anmelden</button>
+            </div>
+            <div class="control">
+                <a href="{% url 'accounts:password_reset' %}" class="button is-ghost">
+                    Passwort vergessen?
+                </a>
             </div>
         </div>
-    </section>
+    </form>
 {% endblock %}

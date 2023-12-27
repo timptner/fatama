@@ -3,13 +3,7 @@
 {% block page %}
     <section class="section">
         <div class="container is-max-desktop">
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="notification{% if message.tags %} {{ message.tags }}{% endif %}">
-                        {{ message|safe }}
-                    </div>
-                {% endfor %}
-            {% endif %}
+            {% include 'fatama/messages_snippet.html' %}
 
             <h3 class="title">Registrieren</h3>
 
