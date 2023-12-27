@@ -22,6 +22,7 @@ ALLOWED_HOSTS = (['127.0.0.1', 'localhost'] +
 
 INSTALLED_APPS = [
     'accounts',
+    'congresses',
     'fontawesomefree',
     'django.contrib.admin',
     'django.contrib.auth',

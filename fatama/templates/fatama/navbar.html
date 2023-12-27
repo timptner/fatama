@@ -11,6 +11,9 @@
         </div>
 
         <div id="mainNavbar" class="navbar-menu">
+        <div class="navbar-start">
+            <a class="navbar-item" href="{% url 'congresses:congress_list' %}">Tagungen</a>
+        </div>
             <div class="navbar-end">
                 {% if user.is_authenticated %}
                     <a class="navbar-item" href="{% url 'accounts:profile' %}">Konto</a>
