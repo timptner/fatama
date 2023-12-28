@@ -1,0 +1,15 @@
+{% extends 'fatama/base.html' %}
+
+{% block content %}
+    <div class="container pt-3">
+        <nav class="breadcrumb" aria-label="breadcrumbs">
+            <ul>
+                {% block breadcrumbs %}
+                    <li class="is-active"><a>{{ congress.title }}</a></li>
+                {% endblock %}
+            </ul>
+        </nav>
+    </div>
+
+    {% block subcontent %}{% endblock %}
+{% endblock %}

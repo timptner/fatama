@@ -6,4 +6,5 @@ app_name = 'congresses'
 urlpatterns = [
     path('', views.CongressesListView.as_view(), name='congress_list'),
     path('<int:congress_id>/participants/', views.ParticipantListView.as_view(), name='participant_list'),
+    path('<int:congress_id>/participants/add/', views.ParticipantCreateView.as_view(), name='create_participant'),
 ]

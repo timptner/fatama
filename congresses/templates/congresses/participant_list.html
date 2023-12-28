@@ -1,9 +1,20 @@
-{% extends 'fatama/base.html' %}
+{% extends 'congresses/base_congress.html' %}
 
-{% block content %}
+{% block breadcrumbs %}
+    {{ block.super }}
+    <li class="is-active"><a>Teilnehmer</a></li>
+{% endblock %}
+
+{% block subcontent %}
     <section class="section">
         <div class="container">
+            <a href="{% url 'congresses:create_participant' congress.pk %}"
+               class="button is-primary is-pulled-right">
+                Teilnehmer ergänzen
+            </a>
             <h3 class="title">Teilnehmer</h3>
+
+            {% include 'fatama/messages_snippet.html' %}
 
             <div class="columns is-multiline">
                 {% for participant in participant_list %}

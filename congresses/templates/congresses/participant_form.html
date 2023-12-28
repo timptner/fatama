@@ -1,0 +1,31 @@
+{% extends 'congresses/base_congress.html' %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    <li><a href="{% url 'congresses:participant_list' congress.pk %}">Teilnehmer</a></li>
+    <li class="is-active"><a>Teilnehmer ergänzen</a></li>
+{% endblock %}
+
+{% block subcontent %}
+    <section class="section">
+        <div class="container">
+            <div class="columns">
+                <div class="column is-half is-offset-one-quarter">
+                    <h3 class="title">Teilnehmer ergänzen</h3>
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        {{ form }}
+
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button type="submit" class="button is-primary">Anmelden</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
