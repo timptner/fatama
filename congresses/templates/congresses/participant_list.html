@@ -3,29 +3,22 @@
 {% block content %}
     <section class="section">
         <div class="container">
-            <h3 class="title">Tagungen</h3>
+            <h3 class="title">Teilnehmer</h3>
 
             <div class="columns is-multiline">
-                {% for congress in congress_list %}
-                    <div class="column is-one-third">
+                {% for participant in participant_list %}
+                    <div class="column is-one-quarter">
                         <div class="card">
                             <div class="card-content">
-                                <p class="title is-4">{{ congress.title }}</p>
-                                <p class="subtitle is-6">{{ congress.location }}</p>
+                                <p class="title is-4">{{ participant.full_name }}</p>
                             </div>
-                            <footer class="card-footer">
-                                <a href="{% url 'congresses:participant_list' congress.pk %}"
-                                   class="card-footer-item">
-                                    Teilnehmer
-                                </a>
-                            </footer>
                         </div>
                     </div>
                 {% empty %}
                     <div class="column is-half is-offset-one-quarter">
                         <article class="message is-info">
                             <div class="message-body">
-                                Bisher wurden noch keine Tagungen erstellen.
+                                Du hast noch keine Teilnehmer angemeldet.
                             </div>
                         </article>
                     </div>
