@@ -14,6 +14,52 @@ from django.utils.http import urlsafe_base64_encode
 from accounts.models import Invite
 
 
+class CouncilCreateViewTest(TestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(username='john')
+        self.path = reverse('accounts:create_council')
+
+    def test_get_view(self) -> None:
+        response = self.client.get(self.path)
+        path = reverse('accounts:login')
+        self.assertRedirects(response, f'{path}?next={self.path}')
+
+    def test_user_get_view(self) -> None:
+        self.client.force_login(self.user)
+        response = self.client.get(self.path)
+        self.assertContains(response, 'Gremium erstellen')
+
+    def test_post_view(self) -> None:
+        response = self.client.post(self.path)
+        path = reverse('accounts:login')
+        self.assertRedirects(response, f'{path}?next={self.path}')
+
+    def test_user_post_view(self) -> None:
+        data = {
+            'university': 'Otto-von-Guericke-Universität Magdeburg',
+            'name': 'Fachschaftsrat Maschinenbau',
+        }
+        self.client.force_login(self.user)
+        response = self.client.post(self.path, data=data)
+        self.assertRedirects(response, reverse('accounts:council_detail'))
+
+
+class CouncilDetailViewTest(TestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(username='john')
+        self.path = reverse('accounts:council_detail')
+
+    def test_view(self) -> None:
+        response = self.client.get(self.path)
+        path = reverse('accounts:login')
+        self.assertRedirects(response, f'{path}?next={self.path}')
+
+    def test_user_view(self) -> None:
+        self.client.force_login(self.user)
+        response = self.client.get(self.path)
+        self.assertContains(response, 'Gremium')
+
+
 class InviteViewTest(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create_user('john')
@@ -127,7 +173,6 @@ class RegistrationViewTest(TestCase):
 
     def test_post_view(self) -> None:
         data = {
-            'profile-university': 'Otto-von-Guericke-University Magdeburg',
             'user-username': 'jane',
             'user-first_name': 'Jane',
             'user-last_name': 'Doe',

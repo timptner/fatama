@@ -10,7 +10,7 @@ from django.core.mail import send_mail
 from django.urls import reverse_lazy
 from django.utils import timezone
 
-from accounts.models import Invite, Profile
+from accounts.models import Council, Invite, Profile
 
 
 class AuthenticationForm(auth_forms.AuthenticationForm):
@@ -18,6 +18,27 @@ class AuthenticationForm(auth_forms.AuthenticationForm):
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({'class': 'input'})
         self.fields['password'].widget.attrs.update({'class': 'input'})
+
+
+class CouncilForm(forms.ModelForm):
+    class Meta:
+        model = Council
+        fields = ['university', 'name']
+        widgets = {
+            'university': forms.TextInput(attrs={'class': 'input'}),
+            'name': forms.TextInput(attrs={'class': 'input'}),
+        }
+
+    def __init__(self, user, *args, **kwargs) -> None:
+        self.user = user
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        council = super().save(commit=False)
+        council.owner = self.user
+        if commit:
+            council.save()
+        return council
 
 
 class InviteForm(forms.ModelForm):
@@ -69,10 +90,7 @@ du hast das Zurücksetzen deines Passworts angefordert.
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['university']
-        widgets = {
-            'university': forms.TextInput(attrs={'class': 'input'})
-        }
+        fields = []
 
     def __init__(self, user, *args, **kwargs):
         self.user = user

@@ -1,0 +1,17 @@
+{% extends 'accounts/base.html' %}
+
+{% block subcontent %}
+    <h3 class="title">Gremium</h3>
+
+    {% include 'fatama/messages_snippet.html' %}
+
+    {% if user.council %}
+        <p>{{ council.university }}</p>
+        <p>{{ council.name }}</p>
+    {% else %}
+        <p class="block">Du hast noch kein Gremium erstellt.</p>
+        <a href="{% url 'accounts:create_council' %}" class="button is-primary">
+            Gremium erstellen
+        </a>
+    {% endif %}
+{% endblock %}

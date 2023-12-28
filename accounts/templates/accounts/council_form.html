@@ -1,0 +1,17 @@
+{% extends 'accounts/base.html' %}
+
+{% block subcontent %}
+    <h3 class="title">Gremium erstellen</h3>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form }}
+
+        <div class="field is-grouped">
+            <div class="control">
+                <button type="submit" class="button is-primary">Anlegen</button>
+            </div>
+        </div>
+    </form>
+{% endblock %}

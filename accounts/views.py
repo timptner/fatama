@@ -6,11 +6,34 @@ from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, DetailView, TemplateView
 
-from accounts.forms import (AuthenticationForm, InviteForm, PasswordResetForm,
-                            ProfileForm, SetPasswordForm, UserForm)
-from accounts.models import Invite
+from accounts.forms import (AuthenticationForm, CouncilForm, InviteForm,
+                            PasswordResetForm, SetPasswordForm, UserForm)
+from accounts.models import Council, Invite
+
+
+class CouncilCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    form_class = CouncilForm
+    success_message = "Gremium wurde erfolgreich erstellt."
+    success_url = reverse_lazy('accounts:council_detail')
+    template_name = 'accounts/council_form.html'
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+
+class CouncilDetailView(LoginRequiredMixin, DetailView):
+    model = Council
+
+    def get_object(self, queryset=None):
+        try:
+            council = Council.objects.get(owner=self.request.user)
+        except Council.DoesNotExist:
+            council = None
+        return council
 
 
 class InviteCreateView(PermissionRequiredMixin, CreateView):
@@ -92,17 +115,13 @@ def registration(request, token):
     if request.method == 'POST':
         user_form = UserForm(data=request.POST, prefix='user')
         password_form = SetPasswordForm(data=request.POST, user=None, prefix='password')
-        profile_form = ProfileForm(data=request.POST, user=None, prefix='profile')
-        if user_form.is_valid() and password_form.is_valid() and profile_form.is_valid():
+        if user_form.is_valid() and password_form.is_valid():
             user = user_form.save()
             logout(request)
             invite.delete()
 
             password_form.user = user
             password_form.save()
-
-            profile_form.user = user
-            profile_form.save()
 
             return redirect(reverse_lazy('accounts:login'))
     else:
@@ -113,10 +132,8 @@ def registration(request, token):
                        "abgemeldet.")
             messages.warning(request, message)
         password_form = SetPasswordForm(None, prefix='password')
-        profile_form = ProfileForm(None, prefix='profile')
         user_form = UserForm(prefix='user')
     return render(request, 'accounts/registration.html', {
         'password_form': password_form,
-        'profile_form': profile_form,
         'user_form': user_form,
     })

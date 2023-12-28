@@ -1,13 +1,25 @@
+from django.contrib.auth.models import User
 from django.test import TestCase
 
-from accounts.forms import ProfileForm, SetPasswordForm, UserForm
+from accounts.forms import CouncilForm, ProfileForm, SetPasswordForm, UserForm
+
+
+class CouncilFormTest(TestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(username='john')
+
+    def test_form(self) -> None:
+        data = {
+            'university': 'Otto-von-Guericke-Universität Magdeburg',
+            'name': 'Fachschaftsrat Maschinenbau',
+        }
+        form = CouncilForm(data=data, user=self.user)
+        self.assertTrue(form.is_valid())
 
 
 class ProfileFormTest(TestCase):
     def test_form_valid(self) -> None:
-        data = {
-            'university': 'Otto-von-Guericke-Universität Magdeburg',
-        }
+        data = {}
         form = ProfileForm(data=data, user=None)
         self.assertTrue(form.is_valid())
 

@@ -3,17 +3,18 @@ from django.db import models
 from django.utils import timezone
 
 
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    university = models.CharField('Universität', max_length=150)
+class Council(models.Model):
+    owner = models.OneToOneField(User, on_delete=models.PROTECT)
+    university = models.CharField("Universität", max_length=150)
+    name = models.CharField("Name")
 
     class Meta:
-        permissions = [
-            ('can_invite', "Kann weitere Benutzer einladen"),
+        constraints = [
+            models.UniqueConstraint(fields=['university', 'name'], name='unique_council'),
         ]
 
     def __str__(self) -> str:
-        return str(self.user)
+        return f'{self.name} ({self.university})'
 
 
 class Invite(models.Model):
@@ -28,3 +29,15 @@ class Invite(models.Model):
 
     def is_expired(self) -> bool:
         return self.expired_at < timezone.now()
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    class Meta:
+        permissions = [
+            ('can_invite', "Kann weitere Benutzer einladen"),
+        ]
+
+    def __str__(self) -> str:
+        return str(self.user)
