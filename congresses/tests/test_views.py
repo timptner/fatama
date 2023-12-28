@@ -2,10 +2,10 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
 
-from congresses.models import Congress
+from congresses.models import Congress, Participant, Portrait
 
 
-class CongressListView(TestCase):
+class CongressListViewTest(TestCase):
     def setUp(self) -> None:
         self.path = reverse('congresses:congress_list')
         self.user = User.objects.create_user(username='john')
@@ -21,7 +21,7 @@ class CongressListView(TestCase):
         self.assertContains(response, "Tagungen")
 
 
-class ParticipantListView(TestCase):
+class ParticipantListViewTest(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create_user(username='john')
         self.congress = Congress.objects.create(title="FaTaMa 2024", location="Magdeburg")
@@ -38,13 +38,13 @@ class ParticipantListView(TestCase):
         self.assertContains(response, "Teilnehmer")
 
 
-class ParticipantFormView(TestCase):
+class ParticipantFormViewTest(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create_user(username='john')
         self.congress = Congress.objects.create(title="FaTaMa 2024", location="Magdeburg")
         self.path = reverse('congresses:create_participant', kwargs={'congress_id': self.congress.pk})
 
-    def test_view(self) -> None:
+    def test_get_view(self) -> None:
         response = self.client.get(self.path)
         path = reverse('accounts:login')
         self.assertRedirects(response, f'{path}?next={self.path}')
@@ -54,7 +54,7 @@ class ParticipantFormView(TestCase):
         path = reverse('accounts:login')
         self.assertRedirects(response, f'{path}?next={self.path}')
 
-    def test_user_view(self) -> None:
+    def test_user_get_view(self) -> None:
         self.client.force_login(self.user)
         response = self.client.get(self.path)
         self.assertContains(response, "Teilnehmer ergänzen")
@@ -69,3 +69,41 @@ class ParticipantFormView(TestCase):
         path = reverse('congresses:participant_list', kwargs={'congress_id': self.congress.pk})
         self.assertRedirects(response, path)
 
+
+class PortraitFormViewTest(TestCase):
+    def setUp(self) -> None:
+        congress = Congress.objects.create(title='FaTaMa 2024', location='Magdeburg')
+        self.participant = Participant.objects.create(congress=congress, first_name='John', last_name='Doe')
+        self.path = reverse('congresses:create_portrait', kwargs={'participant_id': self.participant.pk})
+        self.user = User.objects.create_user(username='john')
+
+    def test_get_view(self) -> None:
+        response = self.client.get(self.path)
+        path = reverse('accounts:login')
+        self.assertRedirects(response, f'{path}?next={self.path}')
+
+    def test_post_view(self) -> None:
+        data = {
+            'diet': Portrait.OMNIVORE,
+            'intolerance': 'Nüsse',
+            'railcard': Portrait.NO_TICKET,
+        }
+        response = self.client.post(self.path, data=data)
+        path = reverse('accounts:login')
+        self.assertRedirects(response, f'{path}?next={self.path}')
+
+    def test_user_get_view(self) -> None:
+        self.client.force_login(self.user)
+        response = self.client.get(self.path)
+        self.assertContains(response, 'Portrait erstellen')
+
+    def test_user_post_view(self) -> None:
+        self.client.force_login(self.user)
+        data = {
+            'diet': Portrait.OMNIVORE,
+            'intolerance': 'Nüsse',
+            'railcard': Portrait.NO_TICKET,
+        }
+        response = self.client.post(self.path, data=data)
+        path = reverse('congresses:participant_list', kwargs={'congress_id': self.participant.congress.pk})
+        self.assertRedirects(response, path)
