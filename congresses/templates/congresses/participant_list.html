@@ -28,7 +28,22 @@
                         <div class="card">
                             <div class="card-content">
                                 <p class="title is-4">{{ participant.full_name }}</p>
+                                {% if participant.portrait %}
+                                    {% with participant.portrait as portrait %}
+                                        <p>{{ portrait.get_diet_display }}</p>
+                                        <p>{{ portrait.intolerances }}</p>
+                                        <p>{{ portrait.get_railcard_display }}</p>
+                                    {% endwith %}
+                                {% else %}
+                                    <p class="is-italic">Kein Portrait vorhanden</p>
+                                {% endif %}
                             </div>
+                            <footer class="card-footer">
+                                <a href="{% url 'congresses:create_portrait' participant.pk %}"
+                                   class="card-footer-item">
+                                    Portrait anlegen
+                                </a>
+                            </footer>
                         </div>
                     </div>
                 {% empty %}

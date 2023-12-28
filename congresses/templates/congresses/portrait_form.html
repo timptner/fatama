@@ -1,0 +1,25 @@
+{% extends 'congresses/base_congress.html' %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    <li class="is-active"><a>Portrait erstellen</a></li>
+{% endblock %}
+
+{% block subcontent %}
+    <section class="section">
+        <div class="container is-max-desktop">
+            <h3 class="title">Portrait erstellen</h3>
+            <form method="post">
+                {% csrf_token %}
+
+                {{ form }}
+
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">Erstellen</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

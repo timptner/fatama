@@ -1,6 +1,6 @@
 from django import forms
 
-from congresses.models import Participant
+from congresses.models import Participant, Portrait
 
 
 class ParticipantForm(forms.ModelForm):
@@ -24,3 +24,26 @@ class ParticipantForm(forms.ModelForm):
         if commit:
             participant.save()
         return participant
+
+
+class PortraitForm(forms.ModelForm):
+    class Meta:
+        model = Portrait
+        fields = ['diet', 'intolerances', 'railcard']
+        widgets = {
+            'intolerances': forms.TextInput(attrs={'class': 'input'}),
+        }
+        help_texts = {
+            'intolerances': "Optional.",
+        }
+
+    def __init__(self, participant, *args, **kwargs) -> None:
+        self.participant = participant
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        portrait = super().save(commit=False)
+        portrait.participant = self.participant
+        if commit:
+            portrait.save()
+        return portrait

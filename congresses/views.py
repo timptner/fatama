@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView
 
-from congresses.forms import ParticipantForm
+from congresses.forms import ParticipantForm, PortraitForm
 from congresses.models import Congress, Participant
 
 
@@ -44,3 +44,24 @@ class ParticipantListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         congress = get_object_or_404(Congress, pk=self.kwargs.get('congress_id'))
         return Participant.objects.filter(congress=congress, contact=self.request.user)
+
+
+class PortraitCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    form_class = PortraitForm
+    success_message = "Portrait erfolgreich erstellt."
+    template_name = 'congresses/portrait_form.html'
+
+    def get_context_data(self, **kwargs):
+        participant = get_object_or_404(Participant, pk=self.kwargs.get('participant_id'))
+        context = super().get_context_data(**kwargs)
+        context['congress'] = participant.congress
+        return context
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['participant'] = get_object_or_404(Participant, pk=self.kwargs.get('participant_id'))
+        return kwargs
+
+    def get_success_url(self):
+        participant = get_object_or_404(Participant, pk=self.kwargs.get('participant_id'))
+        return reverse_lazy('congresses:participant_list', kwargs={'congress_id': participant.congress.pk})

@@ -9,4 +9,7 @@ urlpatterns = [
          views.ParticipantCreateView.as_view(),
          name='create_participant'),
     path('congresses/<int:congress_id>/participants/', views.ParticipantListView.as_view(), name='participant_list'),
+    path('participants/<int:participant_id>/add_profile/',
+         views.PortraitCreateView.as_view(),
+         name='create_portrait'),
 ]
