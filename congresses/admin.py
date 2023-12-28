@@ -10,4 +10,4 @@ class CongressAdmin(admin.ModelAdmin):
 
 @admin.register(Participant)
 class ParticipantAdmin(admin.ModelAdmin):
-    pass
+    list_filter = ['congress', 'contact']
