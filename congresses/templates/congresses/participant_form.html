@@ -1,8 +1,8 @@
-{% extends 'congresses/base_congress.html' %}
+{% extends 'congresses/attendance_detail.html' %}
 
 {% block breadcrumbs %}
     {{ block.super }}
-    <li class="is-active"><a>Teilnehmer ergänzen</a></li>
+    <li><a href="{% url 'congresses:create-participant' attendance.pk %}">Person ergänzen</a></li>
 {% endblock %}
 
 {% block subcontent %}
@@ -10,7 +10,8 @@
         <div class="container">
             <div class="columns">
                 <div class="column is-half is-offset-one-quarter">
-                    <h3 class="title">Teilnehmer ergänzen</h3>
+                    <h3 class="title">Person ergänzen</h3>
+                    <h5 class="subtitle">{{ attendance.council }}</h5>
 
                     <form method="post">
                         {% csrf_token %}
@@ -19,7 +20,13 @@
 
                         <div class="field is-grouped">
                             <div class="control">
-                                <button type="submit" class="button is-primary">Anmelden</button>
+                                <button type="submit" class="button is-success">Hinzufügen</button>
+                            </div>
+                            <div class="control">
+                                <a href="{% url 'congresses:attendance-detail' attendance.pk %}"
+                                   class="button is-danger">
+                                    Abbrechen
+                                </a>
                             </div>
                         </div>
                     </form>

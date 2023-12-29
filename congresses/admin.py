@@ -5,7 +5,8 @@ from congresses.models import Attendance, Congress, Participant, Portrait
 
 @admin.register(Attendance)
 class AttendanceAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['council', 'congress', 'seats']
+    list_filter = ['council', 'congress']
 
 
 @admin.register(Congress)

@@ -5,7 +5,8 @@
         <nav class="breadcrumb" aria-label="breadcrumbs">
             <ul>
                 {% block breadcrumbs %}
-                    <li class="is-active"><a>{{ congress.title }}</a></li>
+                    <li><a href="{% url 'congresses:congress-list' %}">Tagungen</a></li>
+                    <li><a href="{% url 'congresses:congress-detail' congress.pk %}">{{ congress.title }}</a></li>
                 {% endblock %}
             </ul>
         </nav>

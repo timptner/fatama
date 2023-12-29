@@ -1,0 +1,90 @@
+{% extends 'congresses/base_congress.html' %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    <li><a href="{% url 'congresses:attendance-detail' attendance.pk %}">Details zur Teilnahme</a></li>
+{% endblock %}
+
+{% block subcontent %}
+    <section class="section">
+        <div class="container">
+            {% include 'fatama/messages_snippet.html' %}
+
+            <h3 class="title">Details zur Teilnahme</h3>
+            {% if attendance.seats == 0 %}
+                <article class="message is-danger">
+                    <div class="message-body">
+                        Es wurden noch keine Teilnehmerplätze für dein Gremium
+                        freigeschaltet. Du wirst per E-Mail benachrichtigt,
+                        sobald Teilnehmerplätze verfügbar sind.
+                    </div>
+                </article>
+            {% endif %}
+            {% if attendance.remaining_seats == 0 and attendance.seats > 0 %}
+                <article class="message is-warning">
+                    <div class="message-body">
+                        Es sind keine weiteren Teilnehmerplätze für dein Gremium übrig. Sollten weitere Plätze für dein
+                        Gremium freigeschaltet werden, wirst du per E-Mail darüber informiert.
+                    </div>
+                </article>
+            {% endif %}
+
+            <h5 class="title is-5">Gremium</h5>
+            <div class="block">
+                <p>{{ user.council.name }}</p>
+                <p>{{ user.council.university }}</p>
+            </div>
+
+            {% if attendance.remaining_seats > 0 %}
+                <a href="{% url 'congresses:create-participant' attendance.pk %}"
+                   class="button is-primary is-pulled-right">
+                    Person hinzufügen
+                </a>
+            {% else %}
+                <a class="button is-primary is-pulled-right" disabled="">Person hinzufügen</a>
+            {% endif %}
+            <h5 class="title is-5">Personen {{ attendance.participant_set.count }}/{{ attendance.seats }}</h5>
+
+            <article class="message is-info">
+                <div class="message-body">
+                    Vergiss nicht, dich selber ebenfalls als Person zu ergänzen.
+                </div>
+            </article>
+
+            <div class="columns is-multiline">
+                {% for participant in attendance.participant_set.all %}
+                    <div class="column is-one-quarter">
+                        <div class="card">
+                            <div class="card-content">
+                                <p class="has-text-weight-bold">{{ participant.full_name }}</p>
+                                {% if participant.portrait %}
+                                    {% with participant.portrait as portrait %}
+                                        <p>{{ portrait.get_diet_display }}</p>
+                                        <p>{{ portrait.intolerances }}</p>
+                                        <p>{{ portrait.get_railcard_display }}</p>
+                                    {% endwith %}
+                                {% else %}
+                                    <p class="is-italic">Kein Portrait vorhanden</p>
+                                {% endif %}
+                            </div>
+                            <footer class="card-footer">
+                                <a href="{% url 'congresses:create-portrait' participant.pk %}"
+                                   class="card-footer-item">
+                                    Portrait anlegen
+                                </a>
+                            </footer>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="column is-half is-offset-one-quarter">
+                        <article class="message is-info">
+                            <div class="message-body">
+                                Keine Personen angemeldet
+                            </div>
+                        </article>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

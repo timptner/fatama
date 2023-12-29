@@ -1,0 +1,35 @@
+{% extends 'congresses/base_congress.html' %}
+
+{% block breadcrumbs %}
+    {{ block.super }}
+    <li class="is-active"><a>Zur Tagung anmelden</a></li>
+{% endblock %}
+
+{% block subcontent %}
+    <section class="section">
+        <div class="container">
+            <h3 class="title">Zur Tagung anmelden</h3>
+
+            <p class="block">
+                Bitte bestätige, dass dein Gremium <strong>{{ user.council }}</strong>
+                an der Tagung <strong>{{ congress.title }}</strong> teilnehmen wird.
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+
+                {{ form }}
+
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button type="submit" class="button is-success">Anmelden</button>
+                    </div>
+                    <div class="control">
+                        <a href="{% url 'congresses:congress-detail' congress.pk %}"
+                           class="button is-danger">Abbrechen</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

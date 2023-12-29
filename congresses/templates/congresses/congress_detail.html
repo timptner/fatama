@@ -1,0 +1,70 @@
+{% extends 'congresses/base_congress.html' %}
+
+{% block subcontent %}
+    <section class="section">
+        <div class="container">
+            {% include 'fatama/messages_snippet.html' %}
+
+            <h3 class="title">{{ congress.title }}</h3>
+            <h5 class="subtitle">{{ congress.location }}</h5>
+
+            {% if not user.council %}
+                <article class="message is-warning">
+                    <div class="message-body">
+                        Dein Konto ist noch keinem Gremium zugewiesen. Bitte erstelle ein Gremium
+                        <a href="{% url 'accounts:council_detail' %}">in deinem Konto</a>.
+                    </div>
+                </article>
+            {% endif %}
+
+            <div class="buttons">
+                {% if user_attendance %}
+                    <button class="button is-static">
+                        <span class="icon has-text-success">
+                            <i class="fa-solid fa-check"></i>
+                        </span>
+                        <span>Angemeldet</span>
+                    </button>
+                {% else %}
+                    {% if user.council %}
+                        <a href="{% url 'congresses:create-attendance' congress.pk %}" class="button is-primary">
+                            Zur Tagung anmelden
+                        </a>
+                    {% else %}
+                        <a class="button is-primary" disabled="">
+                            Zur Tagung anmelden
+                        </a>
+                    {% endif %}
+                {% endif %}
+                {% if user_attendance %}
+                    <a href="{% url 'congresses:attendance-detail' user_attendance.pk %}"
+                       class="button is-link">
+                        Details zur Teilnahme anzeigen
+                    </a>
+                {% endif %}
+            </div>
+
+            <h4 class="title is-4">Teilnehmende Gremien</h4>
+            <div class="columns is-multiline">
+                {% for attendance in congress.attendance_set.all %}
+                    <div class="column is-one-third">
+                        <div class="box">
+                            {% with attendance.council as council %}
+                                <p class="has-text-weight-bold">{{ council.name }}</p>
+                                <p>{{ council.university }}</p>
+                            {% endwith %}
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="column is-half is-offset-one-quarter">
+                        <article class="message is-info">
+                            <div class="message-body">
+                                Bisher haben sich noch keine Gremien zur Tagung angemeldet.
+                            </div>
+                        </article>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+{% endblock %}

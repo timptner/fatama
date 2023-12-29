@@ -1,25 +1,36 @@
-{% extends 'congresses/base_congress.html' %}
+{% extends 'congresses/attendance_detail.html' %}
 
 {% block breadcrumbs %}
     {{ block.super }}
-    <li class="is-active"><a>Portrait erstellen</a></li>
+    <li><a href="{% url 'congresses:create-portrait' participant.pk %}">Portrait erstellen</a></li>
 {% endblock %}
 
 {% block subcontent %}
     <section class="section">
-        <div class="container is-max-desktop">
-            <h3 class="title">Portrait erstellen</h3>
-            <form method="post">
-                {% csrf_token %}
+        <div class="container">
+            <div class="columns">
+                <div class="column is-half is-offset-one-quarter">
+                    <h3 class="title">Portrait erstellen</h3>
+                    <h5 class="subtitle">{{ participant.full_name }}</h5>
+                    <form method="post">
+                        {% csrf_token %}
 
-                {{ form }}
+                        {{ form }}
 
-                <div class="field is-grouped">
-                    <div class="control">
-                        <button type="submit" class="button is-primary">Erstellen</button>
-                    </div>
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button type="submit" class="button is-success">Erstellen</button>
+                            </div>
+                            <div class="control">
+                                <a href="{% url 'congresses:attendance-detail' attendance.pk %}"
+                                   class="button is-danger">
+                                    Abbrechen
+                                </a>
+                            </div>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
     </section>
 {% endblock %}

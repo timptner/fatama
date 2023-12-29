@@ -1,6 +1,7 @@
+from typing import Optional
+
 from django.contrib.auth.models import User
 from django.db import models
-
 
 from accounts.models import Council
 
@@ -12,14 +13,29 @@ class Congress(models.Model):
     def __str__(self) -> str:
         return self.title
 
+    def get_attendance(self, user: User) -> Optional['Attendance']:
+        try:
+            attendance = self.attendance_set.filter(council__owner=user).get()
+        except Attendance.DoesNotExist:
+            attendance = None
+        return attendance
+
 
 class Attendance(models.Model):
     congress = models.ForeignKey(Congress, on_delete=models.CASCADE)
     council = models.ForeignKey(Council, on_delete=models.PROTECT)
     seats = models.PositiveSmallIntegerField(default=0)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['congress', 'council'], name='unique-attendance')
+        ]
+
     def __str__(self) -> str:
         return f'{self.council} ({self.congress})'
+
+    def remaining_seats(self) -> int:
+        return max(self.seats - self.participant_set.count(), 0)
 
 
 class Participant(models.Model):
