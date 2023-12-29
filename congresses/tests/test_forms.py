@@ -1,28 +1,57 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 
-from congresses.forms import ParticipantForm, PortraitForm
-from congresses.models import Congress, Participant, Portrait
+from accounts.models import Council
+from congresses.forms import AttendanceForm, ParticipantForm, PortraitForm
+from congresses.models import Attendance, Congress, Participant, Portrait
+
+
+class AttendanceFormTest(TestCase):
+    def setUp(self) -> None:
+        self.congress = Congress.objects.create(title="FaTaMa 2024", location="Magdeburg")
+        user = User.objects.create_user(username='john')
+        self.council = Council.objects.create(
+            owner=user,
+            university="Otto-von-Guericke-Universität Magdeburg",
+            name="Fachschaftsrat Maschinenbau",
+        )
+
+    def test_form(self) -> None:
+        form = AttendanceForm(data={}, congress=self.congress, council=self.council)
+        self.assertTrue(form.is_valid())
 
 
 class ParticipantFormTest(TestCase):
     def setUp(self) -> None:
-        self.user = User.objects.create_user(username='john')
-        self.congress = Congress.objects.create(title="FaTaMa 2024", location="Magdeburg")
+        user = User.objects.create_user(username='john')
+        council = Council.objects.create(
+            owner=user,
+            university="Otto-von-Guericke-Universität Magdeburg",
+            name="Fachschaftsrat Maschinenbau",
+        )
+        congress = Congress.objects.create(title="FaTaMa 2024", location="Magdeburg")
+        self.attendance = Attendance.objects.create(council=council, congress=congress)
 
     def test_form(self) -> None:
         data = {
             'first_name': 'John',
             'last_name': 'Doe',
         }
-        form = ParticipantForm(data=data, congress=self.congress, user=self.user)
+        form = ParticipantForm(data=data, attendance=self.attendance)
         self.assertTrue(form.is_valid())
 
 
 class PortraitFormTest(TestCase):
     def setUp(self) -> None:
+        user = User.objects.create(username='john')
+        council = Council.objects.create(
+            owner=user,
+            university="Otto-von-Guericke-Universität Magdeburg",
+            name="Fachschaftsrat Maschinenbau",
+        )
         congress = Congress.objects.create(title='FaTaMa 2024', location='Magdeburg')
-        self.participant = Participant.objects.create(congress=congress, first_name='John', last_name='Doe')
+        attendance = Attendance.objects.create(council=council, congress=congress)
+        self.participant = Participant.objects.create(attendance=attendance, first_name='John', last_name='Doe')
 
     def test_form(self) -> None:
         data = {
