@@ -2,9 +2,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView
+from django.views.generic import CreateView, DetailView, FormView, ListView
 
-from congresses.forms import AttendanceForm, ParticipantForm, PortraitForm
+from congresses.forms import AttendanceForm, ParticipantForm, PortraitForm, SeatForm
 from congresses.models import Attendance, Congress, Participant
 
 
@@ -119,6 +119,46 @@ class PortraitCreateView(LoginRequiredMixin, SuccessMessageMixin, UserPassesTest
         if user.is_superuser:
             return True
         elif participant.attendance.council.owner == user:
+            return True
+        else:
+            return False
+
+
+class SeatFormView(LoginRequiredMixin, SuccessMessageMixin, UserPassesTestMixin, FormView):
+    form_class = SeatForm
+    template_name = 'congresses/update_seats.html'
+    success_message = "Attendances were successfully updated."
+    success_url = reverse_lazy('admin:congresses_attendance_changelist')
+
+    def form_valid(self, form):
+        form.save(self.request)
+        return super().form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        ids = self.request.GET.get('ids')
+        if ids:
+            ids = ids.split(',')
+        else:
+            ids = []
+        context = super().get_context_data(**kwargs)
+        context['attendance_list'] = Attendance.objects.filter(pk__in=ids)
+        return context
+
+    def get_form_kwargs(self):
+        ids = self.request.GET.get('ids')
+        if ids:
+            ids = ids.split(',')
+        else:
+            ids = []
+        kwargs = super().get_form_kwargs()
+        kwargs['ids'] = ids
+        return kwargs
+
+    def test_func(self) -> bool:
+        user = self.request.user
+        if user.is_superuser:
+            return True
+        elif user.is_staff:
             return True
         else:
             return False

@@ -10,4 +10,5 @@ urlpatterns = [
     path('congresses/<int:pk>/', views.CongressDetailView.as_view(), name='congress-detail'),
     path('congresses/<int:pk>/add_attendance/', views.AttendanceCreateView.as_view(), name='create-attendance'),
     path('participants/<int:pk>/add_profile/', views.PortraitCreateView.as_view(), name='create-portrait'),
+    path('attendances/update_seats/', views.SeatFormView.as_view(), name='update-seats'),
 ]

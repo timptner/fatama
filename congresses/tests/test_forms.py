@@ -2,7 +2,7 @@ from django.test import TestCase
 from django.contrib.auth.models import User
 
 from accounts.models import Council
-from congresses.forms import AttendanceForm, ParticipantForm, PortraitForm
+from congresses.forms import AttendanceForm, ParticipantForm, PortraitForm, SeatForm
 from congresses.models import Attendance, Congress, Participant, Portrait
 
 
@@ -60,4 +60,21 @@ class PortraitFormTest(TestCase):
             'railcard': Portrait.GERMANY_TICKET,
         }
         form = PortraitForm(data=data, participant=self.participant)
+        self.assertTrue(form.is_valid())
+
+
+class SeatFormTest(TestCase):
+    def setUp(self) -> None:
+        user = User.objects.create_user(username='john')
+        congress = Congress.objects.create(title="FaTaMa 2024", location="Magdeburg")
+        council = Council.objects.create(
+            owner=user,
+            university="Otto-von-Guericke-Universität Magdeburg",
+            name="Fachschaftsrat Maschinenbau",
+        )
+        attendance = Attendance.objects.create(congress=congress, council=council)
+        self.ids = [attendance.pk]
+
+    def test_form(self):
+        form = SeatForm(ids=self.ids, data={'seats': 5})
         self.assertTrue(form.is_valid())

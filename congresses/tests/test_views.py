@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Permission
 from django.test import TestCase
 from django.urls import reverse
 
@@ -171,3 +171,40 @@ class PortraitCreateViewTest(TestCase):
         response = self.client.post(self.path, data=data)
         path = reverse('congresses:attendance-detail', kwargs={'pk': self.attendance.pk})
         self.assertRedirects(response, path)
+
+
+class SeatFormViewTest(TestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(username='john', is_staff=True)
+        permission = Permission.objects.get(codename='view_attendance')
+        self.user.user_permissions.add(permission)
+        congress = Congress.objects.create(title="FaTaMa 2024", location="Magdeburg")
+        council = Council.objects.create(
+            owner=self.user,
+            university="Otto-von-Guericke-Universität Magdeburg",
+            name="Fachschaftsrat Magdeburg",
+        )
+        attendance = Attendance.objects.create(congress=congress, council=council)
+        self.ids = [str(attendance.pk)]
+        ids = ','.join(self.ids)
+        self.path = reverse('congresses:update-seats') + f'?ids={ids}'
+
+    def test_get_view(self):
+        response = self.client.get(self.path)
+        path = reverse('accounts:login')
+        self.assertRedirects(response, f'{path}?next={self.path}')
+
+    def test_post_view(self):
+        response = self.client.post(self.path)
+        path = reverse('accounts:login')
+        self.assertRedirects(response, f'{path}?next={self.path}')
+
+    def test_user_get_view(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.path)
+        self.assertContains(response, 'Teilnehmerplätze aktualisieren')
+
+    def test_user_post_view(self):
+        self.client.force_login(self.user)
+        response = self.client.post(self.path, data={'seats': 5})
+        self.assertRedirects(response, reverse('admin:congresses_attendance_changelist'))

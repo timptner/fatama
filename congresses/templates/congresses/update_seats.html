@@ -1,0 +1,59 @@
+{% extends 'fatama/base.html' %}
+
+{% block page %}
+    <section class="section">
+        <div class="container">
+            <h3 class="title">Teilnehmerplätze aktualisieren</h3>
+
+            <article class="message is-info">
+                <div class="message-body">
+                    Alle betroffenen Personen werden über die Änderung der Teilnehmerplätze per E-Mail informiert.
+                </div>
+            </article>
+
+            <div class="columns">
+                <div class="column is-half">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Tagung</th>
+                            <th>Universität</th>
+                            <th>Gremium</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for attendance in attendance_list %}
+                            <tr>
+                                <td>{{ attendance.congress.title }}</td>
+                                <td>{{ attendance.council.university }}</td>
+                                <td>{{ attendance.council.name }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="column is-half">
+                    <form method="post">
+                        {% csrf_token %}
+
+                        {{ form }}
+
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button type="submit" class="button is-success">
+                                    Aktualisieren
+                                </button>
+                            </div>
+                            <div class="control">
+                                <a href="{% url 'admin:congresses_attendance_changelist' %}"
+                                   class="button is-danger">
+                                    Abbrechen
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

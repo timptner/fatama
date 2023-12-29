@@ -1,4 +1,6 @@
 from django import forms
+from django.core.mail import send_mass_mail
+from django.urls import reverse_lazy
 
 from congresses.models import Attendance, Participant, Portrait
 
@@ -64,3 +66,38 @@ class PortraitForm(forms.ModelForm):
         if commit:
             portrait.save()
         return portrait
+
+
+class SeatForm(forms.Form):
+    seats = forms.IntegerField(
+        label="Plätze",
+        widget=forms.NumberInput(attrs={'class': 'input'}),
+    )
+
+    def __init__(self, ids, *args, **kwargs):
+        self.ids = ids
+        super().__init__(*args, **kwargs)
+
+    def save(self, request) -> int:
+        seats = self.cleaned_data.get('seats')
+        queryset = Attendance.objects.filter(pk__in=self.ids)
+        updated = queryset.update(seats=seats)
+        mails = []
+        scheme = 'https' if request.is_secure() else 'http'
+        host = request.get_host()
+        for attendance in queryset:
+            user = attendance.council.owner
+            path = reverse_lazy('congresses:attendance-detail', kwargs={'pk': attendance.pk})
+            mail = (
+                "Teilnehmerplätze aktualisiert",
+                f"""Hallo {user.first_name},
+
+die Teilnehmerplätze für die Anmeldung deines Gremiums {attendance.council} zur Tagung {attendance.congress} wurden aktualisiert.
+
+{scheme}://{host}{path}""",
+                None,
+                [user.email],
+            )
+            mails.append(mail)
+        send_mass_mail(mails)
+        return updated
