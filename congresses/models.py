@@ -2,6 +2,9 @@ from django.contrib.auth.models import User
 from django.db import models
 
 
+from accounts.models import Council
+
+
 class Congress(models.Model):
     title = models.CharField("Titel", max_length=50, unique=True)
     location = models.CharField("Austragungsort", max_length=150)
@@ -10,11 +13,19 @@ class Congress(models.Model):
         return self.title
 
 
-class Participant(models.Model):
+class Attendance(models.Model):
     congress = models.ForeignKey(Congress, on_delete=models.CASCADE)
+    council = models.ForeignKey(Council, on_delete=models.PROTECT)
+    seats = models.PositiveSmallIntegerField(default=0)
+
+    def __str__(self) -> str:
+        return f'{self.council} ({self.congress})'
+
+
+class Participant(models.Model):
+    attendance = models.ForeignKey(Attendance, on_delete=models.CASCADE)
     first_name = models.CharField("Vorname", max_length=50)
     last_name = models.CharField("Nachname", max_length=50)
-    contact = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
 
     def __str__(self) -> str:
         return self.full_name
