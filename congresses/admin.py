@@ -1,7 +1,8 @@
-from django.contrib import admin, messages
+from django.contrib import admin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 
+from congresses.forms import AttendanceAdminForm
 from congresses.models import Attendance, Congress, Participant, Portrait
 
 
@@ -10,6 +11,11 @@ class AttendanceAdmin(admin.ModelAdmin):
     list_display = ['council', 'congress', 'seats']
     list_filter = ['council', 'congress']
     actions = ['add_seats']
+    form = AttendanceAdminForm
+
+    def save_form(self, request, form, change):
+        form.send_mail(request)
+        return super().save_form(request, form, change)
 
     @admin.action(description="Update seats of selected attendances")
     def add_seats(self, request, queryset):

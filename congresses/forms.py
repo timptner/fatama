@@ -1,5 +1,5 @@
 from django import forms
-from django.core.mail import send_mass_mail
+from django.core.mail import send_mail, send_mass_mail
 from django.urls import reverse_lazy
 
 from congresses.models import Attendance, Participant, Portrait
@@ -22,6 +22,20 @@ class AttendanceForm(forms.ModelForm):
         if commit:
             attendance.save()
         return attendance
+
+
+class AttendanceAdminForm(forms.ModelForm):
+    class Meta:
+        model = Attendance
+        fields = ['congress', 'council', 'seats']
+
+    def __init__(self, *args, **kwargs):
+        self.request = None
+        super().__init__(*args, **kwargs)
+
+    def send_mail(self, request) -> None:
+        subject, message, sender, recipients = get_seat_update_mail(self.instance, request)
+        send_mail(subject, message, sender, recipients)
 
 
 class ParticipantForm(forms.ModelForm):
@@ -68,6 +82,28 @@ class PortraitForm(forms.ModelForm):
         return portrait
 
 
+def get_seat_update_mail(attendance: Attendance, request):
+    scheme = 'https' if request.is_secure() else 'http'
+    host = request.get_host()
+    path = reverse_lazy('congresses:attendance-detail', kwargs={'pk': attendance.pk})
+    user = attendance.council.owner
+    subject = "Teilnehmerplätze aktualisiert"
+    message = f"""Hallo {user.first_name},
+
+die Teilnehmerplätze für die Anmeldung deines Gremiums {attendance.council} zur Tagung {attendance.congress} wurden aktualisiert.
+
+{scheme}://{host}{path}"""
+    sender = None
+    recipients = [user.email]
+
+    return (
+        subject,
+        message,
+        sender,
+        recipients,
+    )
+
+
 class SeatForm(forms.Form):
     seats = forms.IntegerField(
         label="Plätze",
@@ -82,22 +118,6 @@ class SeatForm(forms.Form):
         seats = self.cleaned_data.get('seats')
         queryset = Attendance.objects.filter(pk__in=self.ids)
         updated = queryset.update(seats=seats)
-        mails = []
-        scheme = 'https' if request.is_secure() else 'http'
-        host = request.get_host()
-        for attendance in queryset:
-            user = attendance.council.owner
-            path = reverse_lazy('congresses:attendance-detail', kwargs={'pk': attendance.pk})
-            mail = (
-                "Teilnehmerplätze aktualisiert",
-                f"""Hallo {user.first_name},
-
-die Teilnehmerplätze für die Anmeldung deines Gremiums {attendance.council} zur Tagung {attendance.congress} wurden aktualisiert.
-
-{scheme}://{host}{path}""",
-                None,
-                [user.email],
-            )
-            mails.append(mail)
+        mails = [get_seat_update_mail(attendance, request) for attendance in queryset]
         send_mass_mail(mails)
         return updated
