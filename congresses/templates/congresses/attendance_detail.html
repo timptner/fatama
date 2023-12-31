@@ -68,10 +68,12 @@
                                 {% endif %}
                             </div>
                             <footer class="card-footer">
-                                <a href="{% url 'congresses:create-portrait' participant.pk %}"
-                                   class="card-footer-item">
-                                    Portrait anlegen
-                                </a>
+                                {% if not participant.portrait %}
+                                    <a href="{% url 'congresses:create-portrait' participant.pk %}"
+                                       class="card-footer-item">
+                                        Portrait anlegen
+                                    </a>
+                                {% endif %}
                             </footer>
                         </div>
                     </div>
