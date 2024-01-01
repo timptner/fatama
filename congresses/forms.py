@@ -31,7 +31,6 @@ class AttendanceAdminForm(ModelForm):
         fields = ['congress', 'council', 'seats']
 
     def __init__(self, *args, **kwargs):
-        self.request = None
         super().__init__(*args, **kwargs)
 
     def send_mail(self, request) -> None:
