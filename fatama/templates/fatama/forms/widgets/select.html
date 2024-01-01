@@ -1,0 +1,11 @@
+<div class="select is-fullwidth">
+    <select name="{{ widget.name }}" id="{{ widget.attrs.id }}"{% if widget.required %} required{% endif %}>
+        {% for group_name, group_choices, group_index in widget.optgroups %}
+            {% for option in group_choices %}
+                <option value="{{ option.value }}"{% if option.selected %} selected{% endif %}>
+                    {{ option.label }}
+                </option>
+            {% endfor %}
+        {% endfor %}
+    </select>
+</div>

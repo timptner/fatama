@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'accounts',
     'congresses',
     'fontawesomefree',
+    'django.forms',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -153,6 +154,11 @@ MESSAGE_TAGS = {
     message_constants.WARNING: 'is-warning',
     message_constants.ERROR: 'is-danger',
 }
+
+
+# Forms
+
+FORM_RENDERER = 'fatama.forms.BulmaFormRenderer'
 
 
 # Logging
