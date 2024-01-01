@@ -27,12 +27,13 @@ class AttendanceAdmin(admin.ModelAdmin):
 
 @admin.register(Congress)
 class CongressAdmin(admin.ModelAdmin):
-    pass
+    list_display = ['title', 'location']
 
 
 @admin.register(Participant)
 class ParticipantAdmin(admin.ModelAdmin):
     list_filter = ['attendance']
+    list_display = ['full_name', 'attendance']
 
 
 @admin.register(Portrait)

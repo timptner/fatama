@@ -29,6 +29,8 @@ class Invite(models.Model):
 
     def is_expired(self) -> bool:
         return self.expired_at < timezone.now()
+    is_expired.boolean = True
+    is_expired.short_description = "Expired"
 
 
 class Profile(models.Model):

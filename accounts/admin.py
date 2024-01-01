@@ -16,4 +16,10 @@ class ProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Invite)
 class InviteAdmin(admin.ModelAdmin):
-    pass
+    readonly_fields = ['token']
+    list_display = ['recipient', 'sender', 'is_expired']
+    list_filter = ['sender']
+    date_hierarchy = 'expired_at'
+
+    def has_add_permission(self, request):
+        return False
