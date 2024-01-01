@@ -10,5 +10,9 @@ class ModelForm(forms.ModelForm):
     template_name_label = 'fatama/forms/label.html'
 
 
+class Form(forms.Form):
+    template_name_label = 'fatama/forms/label.html'
+
+
 class Select(forms.Select):
     template_name = 'fatama/forms/widgets/select.html'

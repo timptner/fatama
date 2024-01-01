@@ -3,9 +3,10 @@ from django.core.mail import send_mail, send_mass_mail
 from django.urls import reverse_lazy
 
 from congresses.models import Attendance, Participant, Portrait
+from fatama.forms import Form, ModelForm, Select
 
 
-class AttendanceForm(forms.ModelForm):
+class AttendanceForm(ModelForm):
     class Meta:
         model = Attendance
         fields = []
@@ -24,7 +25,7 @@ class AttendanceForm(forms.ModelForm):
         return attendance
 
 
-class AttendanceAdminForm(forms.ModelForm):
+class AttendanceAdminForm(ModelForm):
     class Meta:
         model = Attendance
         fields = ['congress', 'council', 'seats']
@@ -38,7 +39,7 @@ class AttendanceAdminForm(forms.ModelForm):
         send_mail(subject, message, sender, recipients)
 
 
-class ParticipantForm(forms.ModelForm):
+class ParticipantForm(ModelForm):
     class Meta:
         model = Participant
         fields = ['first_name', 'last_name']
@@ -59,12 +60,14 @@ class ParticipantForm(forms.ModelForm):
         return participant
 
 
-class PortraitForm(forms.ModelForm):
+class PortraitForm(ModelForm):
     class Meta:
         model = Portrait
         fields = ['diet', 'intolerances', 'railcard']
         widgets = {
+            'diet': Select(),
             'intolerances': forms.TextInput(attrs={'class': 'input'}),
+            'railcard': Select(),
         }
         help_texts = {
             'intolerances': "Optional.",
@@ -104,7 +107,7 @@ die Teilnehmerplätze für die Anmeldung deines Gremiums {attendance.council} zu
     )
 
 
-class SeatForm(forms.Form):
+class SeatForm(Form):
     seats = forms.IntegerField(
         label="Plätze",
         widget=forms.NumberInput(attrs={'class': 'input'}),

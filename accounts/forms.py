@@ -11,16 +11,19 @@ from django.urls import reverse_lazy
 from django.utils import timezone
 
 from accounts.models import Council, Invite, Profile
+from fatama.forms import ModelForm
 
 
 class AuthenticationForm(auth_forms.AuthenticationForm):
+    template_name_label = 'fatama/forms/label.html'
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({'class': 'input'})
         self.fields['password'].widget.attrs.update({'class': 'input'})
 
 
-class CouncilForm(forms.ModelForm):
+class CouncilForm(ModelForm):
     class Meta:
         model = Council
         fields = ['university', 'name']
@@ -41,7 +44,7 @@ class CouncilForm(forms.ModelForm):
         return council
 
 
-class InviteForm(forms.ModelForm):
+class InviteForm(ModelForm):
     def __init__(self, user, *args, **kwargs) -> None:
         self.user = user
         super().__init__(*args, **kwargs)
@@ -66,6 +69,8 @@ class InviteForm(forms.ModelForm):
 
 
 class PasswordResetForm(auth_forms.PasswordResetForm):
+    template_name_label = 'fatama/forms/label.html'
+
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.fields['email'].widget.attrs.update({'class': 'input'})
@@ -87,7 +92,7 @@ du hast das Zurücksetzen deines Passworts angefordert.
         send_mail(subject, body, None, [to_email])
 
 
-class ProfileForm(forms.ModelForm):
+class ProfileForm(ModelForm):
     class Meta:
         model = Profile
         fields = []
@@ -105,13 +110,15 @@ class ProfileForm(forms.ModelForm):
 
 
 class SetPasswordForm(auth_forms.SetPasswordForm):
+    template_name_label = 'fatama/forms/label.html'
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['new_password1'].widget.attrs.update({'class': 'input'})
         self.fields['new_password2'].widget.attrs.update({'class': 'input'})
 
 
-class UserForm(forms.ModelForm):
+class UserForm(ModelForm):
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'email']
