@@ -1,3 +1,4 @@
+import re
 import secrets
 
 from datetime import timedelta
@@ -5,7 +6,9 @@ from datetime import timedelta
 from django import forms
 from django.conf import settings
 from django.contrib.auth import forms as auth_forms
+from django.contrib.auth.password_validation import password_validators_help_texts
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -116,6 +119,7 @@ class SetPasswordForm(auth_forms.SetPasswordForm):
         super().__init__(*args, **kwargs)
         self.fields['new_password1'].widget.attrs.update({'class': 'input'})
         self.fields['new_password2'].widget.attrs.update({'class': 'input'})
+        self.fields['new_password1'].help_text = '<br>'.join(password_validators_help_texts())
 
 
 class UserForm(ModelForm):
@@ -134,9 +138,19 @@ class UserForm(ModelForm):
             'last_name': forms.TextInput(attrs={'class': 'input'}),
             'email': forms.EmailInput(attrs={'class': 'input'}),
         }
+        help_texts = {
+            'username': "150 Zeichen oder weniger. Buchstaben und Ziffern sind zulässig."
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['first_name'].required = True
         self.fields['last_name'].required = True
         self.fields['email'].required = True
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        match = re.match(r'^[a-z\d]+$', username, re.IGNORECASE)
+        if not match:
+            raise ValidationError("Es sind nur Buchstaben und Ziffern erlaubt.", code='blocked_symbol')
+        return username
