@@ -2,6 +2,7 @@ from typing import Optional
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 
 from accounts.models import Council
 
@@ -12,6 +13,9 @@ class Congress(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('congresses:congress-detail', kwargs={'pk': self.pk})
 
     def get_attendance(self, user: User) -> Optional['Attendance']:
         try:
@@ -33,6 +37,9 @@ class Attendance(models.Model):
 
     def __str__(self) -> str:
         return f'{self.council} ({self.congress})'
+
+    def get_absolute_url(self):
+        return reverse('congresses:attendance-detail', kwargs={'pk': self.pk})
 
     def remaining_seats(self) -> int:
         return max(self.seats - self.participant_set.count(), 0)
