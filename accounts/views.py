@@ -36,11 +36,12 @@ class CouncilDetailView(LoginRequiredMixin, DetailView):
         return council
 
 
-class InviteCreateView(PermissionRequiredMixin, CreateView):
+class InviteCreateView(PermissionRequiredMixin, SuccessMessageMixin, CreateView):
     form_class = InviteForm
     permission_required = 'accounts.can_invite'
     template_name = 'accounts/create_invite.html'
     success_url = reverse_lazy('accounts:create_invite')
+    success_message = "Einladung wurde per E-Mail an <strong>%(recipient)s</strong> verschickt."
 
     def get_form_kwargs(self) -> dict:
         kwargs = super().get_form_kwargs()

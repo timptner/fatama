@@ -3,6 +3,8 @@
 {% block subcontent %}
     <h3 class="title">Einladung erstellen</h3>
 
+    {% include 'fatama/messages_snippet.html' %}
+
     <form method="post">
         {% csrf_token %}
 
