@@ -9,6 +9,9 @@ class Council(models.Model):
     name = models.CharField("Name")
 
     class Meta:
+        verbose_name = "Gremium"
+        verbose_name_plural = "Gremien"
+        ordering = ['university', 'name']
         constraints = [
             models.UniqueConstraint(fields=['university', 'name'], name='unique_council'),
         ]
@@ -24,6 +27,11 @@ class Invite(models.Model):
     created_at = models.DateTimeField('Erstellt am', auto_now_add=True)
     expired_at = models.DateTimeField('Abgelaufen am')
 
+    class Meta:
+        verbose_name = "Einladung"
+        verbose_name_plural = "Einladungen"
+        ordering = ['recipient']
+
     def __str__(self) -> str:
         return self.recipient
 
@@ -37,6 +45,8 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
     class Meta:
+        verbose_name = "Profil"
+        verbose_name_plural = "Profile"
         permissions = [
             ('can_invite', "Kann weitere Benutzer einladen"),
         ]

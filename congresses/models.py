@@ -13,6 +13,11 @@ class Congress(models.Model):
     title = models.CharField("Titel", max_length=50, unique=True)
     location = models.CharField("Austragungsort", max_length=150)
 
+    class Meta:
+        verbose_name = "Tagung"
+        verbose_name_plural = "Tagungen"
+        ordering = ['title']
+
     def __str__(self) -> str:
         return self.title
 
@@ -33,6 +38,8 @@ class Attendance(models.Model):
     seats = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
+        verbose_name = "Besuch"
+        verbose_name_plural = "Besuche"
         constraints = [
             models.UniqueConstraint(fields=['congress', 'council'], name='unique-attendance')
         ]
@@ -51,6 +58,11 @@ class Participant(models.Model):
     attendance = models.ForeignKey(Attendance, on_delete=models.CASCADE)
     first_name = models.CharField("Vorname", max_length=50)
     last_name = models.CharField("Nachname", max_length=50)
+
+    class Meta:
+        verbose_name = "Teilnehmer"
+        verbose_name_plural = "Teilnehmer"
+        ordering = ['first_name', 'last_name']
 
     def __str__(self) -> str:
         return self.full_name
@@ -89,6 +101,10 @@ class Portrait(models.Model):
     railcard = models.CharField("Deutschlandticket", choices=RAILCARD_CHOICES, max_length=4)
     certificate = models.FileField("Immatrikulationsbescheinigung", upload_to=participant_directory_path,
                                    validators=[FileExtensionValidator(['pdf'])], null=True)
+
+    class Meta:
+        verbose_name = "Porträt"
+        verbose_name_plural = "Porträts"
 
     def __str__(self) -> str:
         return str(self.participant)
