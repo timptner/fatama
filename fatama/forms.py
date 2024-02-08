@@ -16,3 +16,7 @@ class Form(forms.Form):
 
 class Select(forms.Select):
     template_name = 'fatama/forms/widgets/select.html'
+
+
+class FileInput(forms.FileInput):
+    template_name = 'fatama/forms/widgets/file.html'

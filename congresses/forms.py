@@ -1,9 +1,10 @@
 from django import forms
+from django.core.exceptions import ValidationError
 from django.core.mail import send_mail, send_mass_mail
 from django.urls import reverse_lazy
 
 from congresses.models import Attendance, Participant, Portrait
-from fatama.forms import Form, ModelForm, Select
+from fatama.forms import Form, ModelForm, Select, FileInput
 
 
 class AttendanceForm(ModelForm):
@@ -59,22 +60,51 @@ class ParticipantForm(ModelForm):
         return participant
 
 
+def get_human_size(size: float) -> str:
+    """Convert file size (in bytes) to human version."""
+    if size > 1e9:
+        size = size * 1e-9
+        unit = 'GB'
+    elif size > 1e6:
+        size = size * 1e-6
+        unit = 'MB'
+    elif size > 1e3:
+        size = size * 1e-3
+        unit = 'KB'
+    else:
+        unit = 'B'
+    return f'{size:.1f} {unit}'
+
+
 class PortraitForm(ModelForm):
     class Meta:
         model = Portrait
-        fields = ['diet', 'intolerances', 'railcard']
+        fields = ['diet', 'intolerances', 'railcard', 'certificate']
         widgets = {
             'diet': Select(),
             'intolerances': forms.TextInput(attrs={'class': 'input'}),
             'railcard': Select(),
+            'certificate': FileInput(attrs={'accept': '.pdf'}),
         }
         help_texts = {
             'intolerances': "Optional.",
+            'certificate': "PDF-Datei. Maximal 2 MB."
         }
 
     def __init__(self, participant, *args, **kwargs) -> None:
         self.participant = participant
         super().__init__(*args, **kwargs)
+
+    def clean_certificate(self):
+        certificate = self.cleaned_data.get('certificate')
+        if certificate.size > 2e6:
+            human_size = get_human_size(certificate.size)
+            raise ValidationError(
+                "Datei ist zu groß. (%(human_size)s)",
+                params={'size': human_size},
+                code='size_exceeded',
+            )
+        return certificate
 
     def save(self, commit=True):
         portrait = super().save(commit=False)

@@ -31,8 +31,22 @@
 
             <h5 class="title is-5">Gremium</h5>
             <div class="block">
-                <p>{{ user.council.name }}</p>
-                <p>{{ user.council.university }}</p>
+                <p>
+                    <span class="icon-text">
+                        <span class="icon">
+                            <i class="fa-solid fa-people-group"></i>
+                        </span>
+                        <span>{{ user.council.name }}</span>
+                    </span>
+                </p>
+                <p>
+                    <span class="icon-text">
+                        <span class="icon">
+                            <i class="fa-solid fa-building-columns"></i>
+                        </span>
+                        <span>{{ user.council.university }}</span>
+                    </span>
+                </p>
             </div>
 
             {% if attendance.remaining_seats > 0 %}
@@ -59,9 +73,30 @@
                                 <p class="has-text-weight-bold">{{ participant.full_name }}</p>
                                 {% if participant.portrait %}
                                     {% with participant.portrait as portrait %}
-                                        <p>{{ portrait.get_diet_display }}</p>
-                                        <p>{{ portrait.intolerances }}</p>
-                                        <p>{{ portrait.get_railcard_display }}</p>
+                                        <p>
+                                            <span class="icon-text">
+                                                <span class="icon">
+                                                    <i class="fa-solid fa-seedling"></i>
+                                                </span>
+                                                <span>{{ portrait.get_diet_display }}</span>
+                                            </span>
+                                        </p>
+                                        <p>
+                                            <span class="icon-text">
+                                                <span class="icon">
+                                                    <i class="fa-solid fa-ban"></i>
+                                                </span>
+                                                <span>{{ portrait.intolerances|default:"Keine Unverträglichkeiten" }}</span>
+                                            </span>
+                                        </p>
+                                        <p>
+                                            <span class="icon-text">
+                                                <span class="icon">
+                                                    <i class="fa-solid fa-ticket"></i>
+                                                </span>
+                                                <span>{{ portrait.get_railcard_display }}</span>
+                                            </span>
+                                        </p>
                                     {% endwith %}
                                 {% else %}
                                     <p class="is-italic">Kein Portrait vorhanden</p>

@@ -1,6 +1,8 @@
+from pathlib import Path
 from typing import Optional
 
 from django.contrib.auth.models import User
+from django.core.validators import FileExtensionValidator
 from django.db import models
 from django.urls import reverse
 
@@ -58,6 +60,12 @@ class Participant(models.Model):
         return f"{self.first_name} {self.last_name}"
 
 
+def participant_directory_path(instance, filename) -> str:
+    pk = instance.participant.id
+    suffix = Path(filename).suffix.lower()
+    return f'certificates/participant_{pk:06d}/certificate{suffix}'
+
+
 class Portrait(models.Model):
     VEGAN = 'V+'
     VEGETARIAN = 'V'
@@ -68,21 +76,19 @@ class Portrait(models.Model):
         OMNIVORE: 'Omnivore',
     }
     NO_TICKET = 'NONE'
-    BAHNCARD_25 = '25'
-    BAHNCARD_50 = '50'
-    BAHNCARD_100 = '100'
-    GERMANY_TICKET = 'FREE'
+    STUDENT_CARD = 'CARD'
+    INDEPENDENT = 'SELF'
     RAILCARD_CHOICES = {
-        NO_TICKET: 'Keine Vergünstigung',
-        BAHNCARD_25: 'BahnCard 25',
-        BAHNCARD_50: 'BahnCard 50',
-        BAHNCARD_100: 'BahnCard 100',
-        GERMANY_TICKET: 'Deutschlandticket',
+        NO_TICKET: "Nicht vorhanden",
+        STUDENT_CARD: "Im Studentenausweis inbegriffen",
+        INDEPENDENT: "Eigenständig erworben",
     }
     participant = models.OneToOneField(Participant, on_delete=models.CASCADE)
     diet = models.CharField("Ernährungsweise", choices=DIET_CHOICES, max_length=2)
     intolerances = models.CharField("Unverträglichkeiten", max_length=200, blank=True)
-    railcard = models.CharField("Bahn-Ticket", choices=RAILCARD_CHOICES, max_length=4)
+    railcard = models.CharField("Deutschlandticket", choices=RAILCARD_CHOICES, max_length=4)
+    certificate = models.FileField("Immatrikulationsbescheinigung", upload_to=participant_directory_path,
+                                   validators=[FileExtensionValidator(['pdf'])], null=True)
 
     def __str__(self) -> str:
         return str(self.participant)

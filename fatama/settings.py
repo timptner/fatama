@@ -113,6 +113,17 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATICFILES_DIRS = [
+    BASE_DIR / 'fatama' / 'static',
+]
+
+
+# Media storage
+
+MEDIA_ROOT = os.getenv('MEDIA_ROOT', str((BASE_DIR / 'media').absolute()))
+
+MEDIA_URL = 'media/'
+
 
 # Default primary key field type
 
