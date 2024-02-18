@@ -1,59 +1,70 @@
 {% extends 'fatama/base.html' %}
 
+{% block title %}
+    {{ block.super }} | Teilnehmerplätze aktualisieren
+{% endblock %}
+
 {% block page %}
     <section class="section">
-        <div class="container">
+        <div class="container is-max-desktop">
             <h3 class="title">Teilnehmerplätze aktualisieren</h3>
 
             <article class="message is-info">
                 <div class="message-body">
-                    Alle betroffenen Personen werden über die Änderung der Teilnehmerplätze per E-Mail informiert.
+                    Alle betroffenen Gremien werden per E-Mail über die Änderung der Teilnehmerplätze informiert.
                 </div>
             </article>
 
-            <div class="columns">
-                <div class="column is-half">
-                    <table class="table">
+            <form method="post">
+                {% csrf_token %}
+
+                {{ form }}
+
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button type="submit" class="button is-success">
+                            Aktualisieren
+                        </button>
+                    </div>
+                    <div class="control">
+                        <a href="{% url 'admin:congresses_attendance_changelist' %}"
+                           class="button is-danger">
+                            Abbrechen
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container is-max-desktop">
+            <h4 class="title is-4">Betroffene Gremien</h4>
+            <h6 class="subtitle is-6">Liste aller Gremien, wessen Plätze aktualisiert werden</h6>
+
+            {% regroup attendance_list by congress as congress_list %}
+            {% for congress, attendances in congress_list %}
+                <div class="block">
+                    <h5 class="title is-5 has-text-centered">{{ congress }}</h5>
+
+                    <table class="table is-fullwidth">
                         <thead>
-                        <tr>
-                            <th>Tagung</th>
-                            <th>Universität</th>
-                            <th>Gremium</th>
-                        </tr>
+                            <tr>
+                                <th>Gremium</th>
+                                <th>Universität</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {% for attendance in attendance_list %}
-                            <tr>
-                                <td>{{ attendance.congress.title }}</td>
-                                <td>{{ attendance.council.university }}</td>
-                                <td>{{ attendance.council.name }}</td>
-                            </tr>
-                        {% endfor %}
+                            {% for attendance in attendances %}
+                                <tr>
+                                    <td>{{ attendance.council.name }}</td>
+                                    <td>{{ attendance.council.university }}</td>
+                                </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>
-                <div class="column is-half">
-                    <form method="post">
-                        {% csrf_token %}
-
-                        {{ form }}
-
-                        <div class="field is-grouped">
-                            <div class="control">
-                                <button type="submit" class="button is-success">
-                                    Aktualisieren
-                                </button>
-                            </div>
-                            <div class="control">
-                                <a href="{% url 'admin:congresses_attendance_changelist' %}"
-                                   class="button is-danger">
-                                    Abbrechen
-                                </a>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </section>
 {% endblock %}

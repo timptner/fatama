@@ -1,7 +1,7 @@
 {% extends 'fatama/base.html' %}
 
 {% block title %}
- {{ block.super }} | {{ congress.title }}
+    {{ block.super }} | {{ congress.title }}
 {% endblock %}
 
 {% block content %}
@@ -16,41 +16,46 @@
                 </div>
             {% endif %}
 
-            {% if not user.council %}
-                <article class="message is-warning">
+            {% if user.council and attendance %}
+                <article class="message is-success">
+                    <div class="message-header">Details zur Anmeldung</div>
                     <div class="message-body">
-                        Dein Konto ist noch keinem Gremium zugewiesen. Bitte erstelle ein Gremium
-                        <a href="{% url 'accounts:council_detail' %}">in deinem Konto</a>.
+                        <div class="block">
+                            Eigene Teilnehmer für die Tagung anmelden und deren Informationen verwalten.
+                        </div>
+                        <div class="buttons">
+                            <a href="{% url 'congresses:attendance_detail' attendance.pk %}" class="button is-success">
+                                Details anzeigen
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            {% elif user.council %}
+                <article class="message is-link">
+                    <div class="message-header">Anmeldung möglich</div>
+                    <div class="message-body">
+                        <div class="block">
+                            Du kannst dein Gremium für die Tagung anmelden. Teilnehmer und weitere Informationen
+                            werden im nächsten Schritt hinzugefügt.
+                        </div>
+                        <div class="buttons">
+                            <a href="{% url 'congresses:create_attendance' congress.year %}" class="button is-link">
+                                Zur Tagung anmelden
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            {% else %}
+                <article class="message is-warning">
+                    <div class="message-header">
+                        Anmeldung nicht möglich
+                    </div>
+                    <div class="message-body">
+                        Dein Konto ist noch keinem Gremium zugewiesen. Bitte erstelle zuerst das Gremium, für welches
+                        du die Anmeldung vornimmst.
                     </div>
                 </article>
             {% endif %}
-
-            <div class="buttons">
-                {% if user_attendance %}
-                    <button class="button is-static">
-                        <span class="icon has-text-success">
-                            <i class="fa-solid fa-check"></i>
-                        </span>
-                        <span>Angemeldet</span>
-                    </button>
-                {% else %}
-                    {% if user.council %}
-                        <a href="{% url 'congresses:create-attendance' congress.pk %}" class="button is-primary">
-                            Zur Tagung anmelden
-                        </a>
-                    {% else %}
-                        <a class="button is-primary" disabled="">
-                            Zur Tagung anmelden
-                        </a>
-                    {% endif %}
-                {% endif %}
-                {% if user_attendance %}
-                    <a href="{% url 'congresses:attendance-detail' user_attendance.pk %}"
-                       class="button is-link">
-                        Details zur Teilnahme anzeigen
-                    </a>
-                {% endif %}
-            </div>
 
             <h4 class="title is-4">Teilnehmende Gremien</h4>
             <div class="columns is-multiline">
@@ -64,10 +69,10 @@
                         </div>
                     </div>
                 {% empty %}
-                    <div class="column is-half is-offset-one-quarter">
+                    <div class="column is-full">
                         <article class="message is-info">
                             <div class="message-body">
-                                Bisher haben sich noch keine Gremien zur Tagung angemeldet.
+                                Es haben sich noch keine Gremien für diese Tagung angemeldet.
                             </div>
                         </article>
                     </div>

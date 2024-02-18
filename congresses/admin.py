@@ -9,7 +9,7 @@ from congresses.models import Attendance, Congress, Participant, Portrait
 @admin.register(Attendance)
 class AttendanceAdmin(admin.ModelAdmin):
     list_display = ['council', 'congress', 'seats']
-    list_filter = ['council', 'congress']
+    list_filter = ['council', 'congress__year']
     actions = ['add_seats']
     form = AttendanceAdminForm
 
@@ -20,7 +20,7 @@ class AttendanceAdmin(admin.ModelAdmin):
     @admin.action(description="Update seats of selected attendances")
     def add_seats(self, request, queryset):
         selected = queryset.values_list('pk', flat=True)
-        path = reverse_lazy('congresses:update-seats')
+        path = reverse_lazy('congresses:update_seats')
         ids = ','.join([str(pk) for pk in selected])
         return redirect(f'{path}?ids={ids}')
 

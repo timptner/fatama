@@ -1,47 +1,42 @@
-{% extends 'congresses/attendance_detail.html' %}
+{% extends 'fatama/base.html' %}
 
 {% load static %}
 
-{% block breadcrumbs %}
-    {{ block.super }}
-    <li><a href="{% url 'congresses:create-portrait' participant.pk %}">Portrait erstellen</a></li>
+{% block title %}
+    {{ block.super }} | Portrait erstellen
 {% endblock %}
 
-{% block subcontent %}
+{% block content %}
     <section class="section">
-        <div class="container">
-            <div class="columns">
-                <div class="column is-half is-offset-one-quarter">
-                    <h3 class="title">Portrait erstellen</h3>
-                    <h5 class="subtitle">{{ participant.full_name }}</h5>
+        <div class="container is-max-desktop">
+            <h3 class="title">Portrait erstellen</h3>
+            <h5 class="subtitle">{{ participant.full_name }}</h5>
 
-                    <article class="message is-info">
-                        <div class="message-body">
-                            Das <em>Bundesministerium für Bildung und Forschung</em>
-                            verlangt für die Förderung der Tagung die
-                            Immatrikulationsbescheinigung von allen Teilnehmer.
-                        </div>
-                    </article>
-
-                    <form method="post" enctype="multipart/form-data">
-                        {% csrf_token %}
-
-                        {{ form }}
-
-                        <div class="field is-grouped">
-                            <div class="control">
-                                <button type="submit" class="button is-success">Erstellen</button>
-                            </div>
-                            <div class="control">
-                                <a href="{% url 'congresses:attendance-detail' attendance.pk %}"
-                                   class="button is-danger">
-                                    Abbrechen
-                                </a>
-                            </div>
-                        </div>
-                    </form>
+            <article class="message is-info">
+                <div class="message-body">
+                    Das <em>Bundesministerium für Bildung und Forschung</em>
+                    verlangt für die Förderung der Tagung die
+                    Immatrikulationsbescheinigung von allen Teilnehmer.
                 </div>
-            </div>
+            </article>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {{ form }}
+
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button type="submit" class="button is-success">Erstellen</button>
+                    </div>
+                    <div class="control">
+                        <a href="{% url 'congresses:attendance_detail' attendance.pk %}"
+                           class="button is-danger">
+                            Abbrechen
+                        </a>
+                    </div>
+                </div>
+            </form>
         </div>
     </section>
 {% endblock %}

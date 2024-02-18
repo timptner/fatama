@@ -1,69 +1,129 @@
-{% extends 'congresses/base_congress.html' %}
+{% extends 'fatama/base.html' %}
 
-{% block breadcrumbs %}
-    {{ block.super }}
-    <li><a href="{% url 'congresses:attendance-detail' attendance.pk %}">Details zur Teilnahme</a></li>
+{% block title %}
+    {{ block.super }} | {{ attendance.congress.title }}
 {% endblock %}
 
-{% block subcontent %}
+{% block content %}
     <section class="section">
         <div class="container">
-            {% include 'fatama/messages_snippet.html' %}
-
             <h3 class="title">Details zur Teilnahme</h3>
-            {% if attendance.seats == 0 %}
-                <article class="message is-danger">
-                    <div class="message-body">
-                        Es wurden noch keine Teilnehmerplätze für dein Gremium
-                        freigeschaltet. Du wirst per E-Mail benachrichtigt,
-                        sobald Teilnehmerplätze verfügbar sind.
-                    </div>
-                </article>
-            {% endif %}
-            {% if attendance.remaining_seats == 0 and attendance.seats > 0 %}
-                <article class="message is-warning">
-                    <div class="message-body">
-                        Es sind keine weiteren Teilnehmerplätze für dein Gremium übrig. Sollten weitere Plätze für dein
-                        Gremium freigeschaltet werden, wirst du per E-Mail darüber informiert.
-                    </div>
-                </article>
-            {% endif %}
+            <h5 class="subtitle">{{ attendance.congress.title }}</h5>
 
-            <h5 class="title is-5">Gremium</h5>
-            <div class="block">
-                <p>
-                    <span class="icon-text">
-                        <span class="icon">
-                            <i class="fa-solid fa-people-group"></i>
-                        </span>
-                        <span>{{ user.council.name }}</span>
-                    </span>
-                </p>
-                <p>
-                    <span class="icon-text">
-                        <span class="icon">
-                            <i class="fa-solid fa-building-columns"></i>
-                        </span>
-                        <span>{{ user.council.university }}</span>
-                    </span>
-                </p>
+            <div class="columns">
+                <div class="column">
+                    <h5 class="title is-5">Tagung</h5>
+                    <div class="block">
+                        {% with attendance.congress as congress %}
+                        <p>
+                            <span class="icon-text">
+                                <span class="icon">
+                                    <i class="fa-solid fa-flag"></i>
+                                </span>
+                                <span>{{ congress.title }}</span>
+                            </span>
+                        </p>
+                        <p>
+                            <span class="icon-text">
+                                <span class="icon">
+                                    <i class="fa-solid fa-location-pin"></i>
+                                </span>
+                                <span>{{ congress.location }}</span>
+                            </span>
+                        </p>
+                        <p>
+                            <span class="icon-text">
+                                <span class="icon">
+                                    <i class="fa-solid fa-calendar"></i>
+                                </span>
+                                <span>{{ congress.year }}</span>
+                            </span>
+                        </p>
+                        {% endwith %}
+                    </div>
+                </div>
+
+                <div class="column">
+                    <h5 class="title is-5">Gremium</h5>
+                    <div class="block">
+                        {% with attendance.council as council %}
+                        <p>
+                            <span class="icon-text">
+                                <span class="icon">
+                                    <i class="fa-solid fa-people-group"></i>
+                                </span>
+                                <span>{{ user.council.name }}</span>
+                            </span>
+                        </p>
+                        <p>
+                            <span class="icon-text">
+                                <span class="icon">
+                                    <i class="fa-solid fa-building-columns"></i>
+                                </span>
+                                <span>{{ user.council.university }}</span>
+                            </span>
+                        </p>
+                        {% endwith %}
+                    </div>
+                </div>
             </div>
 
-            {% if attendance.remaining_seats > 0 %}
-                <a href="{% url 'congresses:create-participant' attendance.pk %}"
-                   class="button is-primary is-pulled-right">
-                    Person hinzufügen
-                </a>
+            {% if attendance.seats == 0 %}
+                <article class="message is-danger">
+                    <div class="message-header">
+                        Keine Plätze verfügbar
+                    </div>
+                    <div class="message-body">
+                        Es wurden noch keine Teilnehmerplätze für dein Gremium freigeschaltet. Du wirst per E-Mail
+                        benachrichtigt, sobald Plätze zur Verfügung stehen.
+                    </div>
+                </article>
+            {% elif attendance.remaining_seats == 0 %}
+                <article class="message is-warning">
+                    <div class="message-header">
+                        Alle Plätze belegt
+                    </div>
+                    <div class="message-body">
+                        Du hast alle verfügbaren Teilnehmerplätze für dein Gremium aufgebraucht. Es kann sein, dass die
+                        Vergabe weiterer Plätze aufgrund von ungenutzten Plätzen anderer Gremien erfolgt. Wenn weitere
+                        Plätze für dein Gremium freigeschaltet werden, wirst du erneut per E-Mail darüber informiert.
+                    </div>
+                </article>
             {% else %}
-                <a class="button is-primary is-pulled-right" disabled="">Person hinzufügen</a>
+                <article class="message is-success">
+                    <div class="message-header">
+                        Plätze verfügbar
+                    </div>
+                    <div class="message-body">
+                        <div class="block">
+                            Du hast noch nicht alle Plätze aufgebraucht. Melde gerne weitere Teilnehmer für die Tagung
+                            an. <strong>Die Anmeldung der Teilnehmer ist verbindlich.</strong> Stelle bitte vorher
+                            sicher, dass die Personen auch wirklich teilnehmen können. Sollte dein Gremium nicht alle
+                            Plätze benötigen, werden die übrigen Plätze an andere Gremien vergeben. Hierzu wird es
+                            eine gesonderte Mitteilung geben, sobald die ungenutzten Plätze neu vergeben werden.
+                        </div>
+                        <div class="block">
+                            <span class="icon-text">
+                                <span class="icon has-text-danger">
+                                    <i class="fa-solid fa-exclamation fa-lg"></i>
+                                </span>
+                                <span>
+                                    Vergiss bitte nicht, dich ebenfalls als Teilnehmer anzulegen, falls du auch zur
+                                    Tagung mitfahren möchtest.
+                                </span>
+                            </span>
+                        </div>
+                        <div class="buttons">
+                            <a href="{% url 'congresses:create_participant' attendance.pk %}"
+                               class="button is-success">
+                                Teilnehmer hinzufügen
+                            </a>
+                        </div>
+                    </div>
+                </article>
             {% endif %}
-            <h5 class="title is-5">Personen {{ attendance.participant_set.count }}/{{ attendance.seats }}</h5>
 
-            <article class="message is-info">
-                <div class="message-body">
-                    Vergiss nicht, dich selber ebenfalls als Person zu ergänzen.
-                </div>
-            </article>
+            <h5 class="title is-5">Personen {{ attendance.participant_set.count }}/{{ attendance.seats }}</h5>
 
             <div class="columns is-multiline">
                 {% for participant in attendance.participant_set.all %}
@@ -104,7 +164,7 @@
                             </div>
                             <footer class="card-footer">
                                 {% if not participant.portrait %}
-                                    <a href="{% url 'congresses:create-portrait' participant.pk %}"
+                                    <a href="{% url 'congresses:create_portrait' participant.pk %}"
                                        class="card-footer-item">
                                         Portrait anlegen
                                     </a>
@@ -113,10 +173,10 @@
                         </div>
                     </div>
                 {% empty %}
-                    <div class="column is-half is-offset-one-quarter">
+                    <div class="column is-full">
                         <article class="message is-info">
                             <div class="message-body">
-                                Keine Personen angemeldet
+                                Du hast noch keine Teilnehmer angemeldet
                             </div>
                         </article>
                     </div>

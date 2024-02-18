@@ -117,7 +117,7 @@ class PortraitForm(ModelForm):
 def get_seat_update_mail(attendance: Attendance, request):
     scheme = 'https' if request.is_secure() else 'http'
     host = request.get_host()
-    path = reverse_lazy('congresses:attendance-detail', kwargs={'pk': attendance.pk})
+    path = reverse_lazy('congresses:attendance_detail', kwargs={'pk': attendance.pk})
     user = attendance.council.owner
     subject = "Teilnehmerplätze aktualisiert"
     message = f"""Hallo {user.first_name},

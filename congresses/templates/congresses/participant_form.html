@@ -1,37 +1,39 @@
-{% extends 'congresses/attendance_detail.html' %}
+{% extends 'fatama/base.html' %}
 
-{% block breadcrumbs %}
-    {{ block.super }}
-    <li><a href="{% url 'congresses:create-participant' attendance.pk %}">Person ergänzen</a></li>
+{% block title %}
+    {{ block.super }} | Teilnehmer anmelden
 {% endblock %}
 
-{% block subcontent %}
+{% block content %}
     <section class="section">
-        <div class="container">
-            <div class="columns">
-                <div class="column is-half is-offset-one-quarter">
-                    <h3 class="title">Person ergänzen</h3>
-                    <h5 class="subtitle">{{ attendance.council }}</h5>
+        <div class="container is-max-desktop">
+            <h3 class="title">Teilnehmer anmelden</h3>
+            <h5 class="subtitle">{{ attendance.congress.title }}</h5>
 
-                    <form method="post">
-                        {% csrf_token %}
-
-                        {{ form }}
-
-                        <div class="field is-grouped">
-                            <div class="control">
-                                <button type="submit" class="button is-success">Hinzufügen</button>
-                            </div>
-                            <div class="control">
-                                <a href="{% url 'congresses:attendance-detail' attendance.pk %}"
-                                   class="button is-danger">
-                                    Abbrechen
-                                </a>
-                            </div>
-                        </div>
-                    </form>
+            <article class="message is-info">
+                <div class="message-body">
+                    Die weiteren personenbezogen Informationen zu den Teilnehmern (Unverträglichkeiten, etc.) können
+                    in einem späteren Schritt ergänzt werden.
                 </div>
-            </div>
+            </article>
+
+            <form method="post">
+                {% csrf_token %}
+
+                {{ form }}
+
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button type="submit" class="button is-success">Hinzufügen</button>
+                    </div>
+                    <div class="control">
+                        <a href="{% url 'congresses:attendance_detail' attendance.pk %}"
+                           class="button is-danger">
+                            Abbrechen
+                        </a>
+                    </div>
+                </div>
+            </form>
         </div>
     </section>
 {% endblock %}

@@ -15,17 +15,17 @@ class AttendanceCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['congress'] = get_object_or_404(Congress, pk=self.kwargs.get('pk'))
+        context['congress'] = get_object_or_404(Congress, year=self.kwargs['year'])
         return context
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['congress'] = get_object_or_404(Congress, pk=self.kwargs.get('pk'))
+        kwargs['congress'] = get_object_or_404(Congress, year=self.kwargs['year'])
         kwargs['council'] = self.request.user.council
         return kwargs
 
     def get_success_url(self):
-        return reverse_lazy('congresses:congress-detail', kwargs={'pk': self.kwargs.get('pk')})
+        return reverse_lazy('congresses:congress_detail', kwargs={'year': self.kwargs['year']})
 
 
 class AttendanceDetailsView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
@@ -38,7 +38,7 @@ class AttendanceDetailsView(LoginRequiredMixin, UserPassesTestMixin, DetailView)
 
     def test_func(self) -> bool:
         user = self.request.user
-        attendance = get_object_or_404(Attendance, pk=self.kwargs.get('pk'))
+        attendance = get_object_or_404(Attendance, pk=self.kwargs['pk'])
         if user.is_superuser:
             return True
         elif attendance.council.owner == user:
@@ -55,7 +55,7 @@ class CongressDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
-        context['user_attendance'] = self.object.get_attendance(self.request.user)
+        context['attendance'] = self.object.get_attendance(self.request.user)
         return context
 
 
@@ -65,11 +65,11 @@ class CongressListView(LoginRequiredMixin, ListView):
 
 class ParticipantCreateView(LoginRequiredMixin, SuccessMessageMixin, UserPassesTestMixin, CreateView):
     form_class = ParticipantForm
-    success_message = "Person wurde ergänzt."
+    success_message = "Teilnehmer wurde hinzugefügt."
     template_name = 'congresses/participant_form.html'
 
     def get_context_data(self, *, object_list=None, **kwargs):
-        attendance = get_object_or_404(Attendance, pk=self.kwargs.get('pk'))
+        attendance = get_object_or_404(Attendance, pk=self.kwargs['pk'])
         context = super().get_context_data(object_list=object_list, **kwargs)
         context['attendance'] = attendance
         context['congress'] = attendance.congress
@@ -77,15 +77,15 @@ class ParticipantCreateView(LoginRequiredMixin, SuccessMessageMixin, UserPassesT
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['attendance'] = get_object_or_404(Attendance, pk=self.kwargs.get('pk'))
+        kwargs['attendance'] = get_object_or_404(Attendance, pk=self.kwargs['pk'])
         return kwargs
 
     def get_success_url(self):
-        return reverse_lazy('congresses:attendance-detail', kwargs={'pk': self.kwargs.get('pk')})
+        return reverse_lazy('congresses:attendance_detail', kwargs={'pk': self.kwargs['pk']})
 
     def test_func(self) -> bool:
         user = self.request.user
-        attendance = get_object_or_404(Attendance, pk=self.kwargs.get('pk'))
+        attendance = get_object_or_404(Attendance, pk=self.kwargs['pk'])
         if user.is_superuser:
             return True
         elif attendance.council.owner == user:
@@ -100,7 +100,7 @@ class PortraitCreateView(LoginRequiredMixin, SuccessMessageMixin, UserPassesTest
     template_name = 'congresses/portrait_form.html'
 
     def get_context_data(self, **kwargs):
-        participant = get_object_or_404(Participant, pk=self.kwargs.get('pk'))
+        participant = get_object_or_404(Participant, pk=self.kwargs['pk'])
         context = super().get_context_data(**kwargs)
         context['participant'] = participant
         context['attendance'] = participant.attendance
@@ -109,16 +109,16 @@ class PortraitCreateView(LoginRequiredMixin, SuccessMessageMixin, UserPassesTest
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['participant'] = get_object_or_404(Participant, pk=self.kwargs.get('pk'))
+        kwargs['participant'] = get_object_or_404(Participant, pk=self.kwargs['pk'])
         return kwargs
 
     def get_success_url(self):
-        participant = get_object_or_404(Participant, pk=self.kwargs.get('pk'))
-        return reverse_lazy('congresses:attendance-detail', kwargs={'pk': participant.attendance.pk})
+        participant = get_object_or_404(Participant, pk=self.kwargs['pk'])
+        return reverse_lazy('congresses:attendance_detail', kwargs={'pk': participant.attendance.pk})
 
     def test_func(self) -> bool:
         user = self.request.user
-        participant = get_object_or_404(Participant, pk=self.kwargs.get('pk'))
+        participant = get_object_or_404(Participant, pk=self.kwargs['pk'])
         if user.is_superuser:
             return True
         elif participant.attendance.council.owner == user:
