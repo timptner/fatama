@@ -27,7 +27,7 @@ class AttendanceAdmin(admin.ModelAdmin):
 
 @admin.register(Congress)
 class CongressAdmin(admin.ModelAdmin):
-    list_display = ['title', 'location']
+    list_display = ['title', 'location', 'year']
 
 
 @admin.register(Participant)

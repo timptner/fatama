@@ -4,6 +4,7 @@ from congresses import views
 
 app_name = 'congresses'
 urlpatterns = [
+    path('<int:year>', views.CongressDetailView.as_view(), name='congress_detail'),
     path('attendances/<int:pk>/', views.AttendanceDetailsView.as_view(), name='attendance-detail'),
     path('attendances/<int:pk>/add_participant/', views.ParticipantCreateView.as_view(), name='create-participant'),
     path('congresses/', views.CongressListView.as_view(), name='congress-list'),

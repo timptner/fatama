@@ -4,22 +4,34 @@ from typing import Optional
 from django.contrib.auth.models import User
 from django.core.validators import FileExtensionValidator
 from django.db import models
+from django.db.models import Q
 from django.urls import reverse
 
 from accounts.models import Council
 
 
 class Congress(models.Model):
-    title = models.CharField("Titel", max_length=50, unique=True)
-    location = models.CharField("Austragungsort", max_length=150)
+    year = models.IntegerField("Jahr", unique=True, null=True)
+    location = models.CharField("Austragungsort", max_length=150,
+                                help_text="Die Stadt reicht aus.")
+    title = models.CharField("Titel", max_length=50,
+                             help_text="Verwende einen knackigen Titel und nicht nur \"FaTaMa\".")
+    message = models.TextField("Botschaft", blank=True)
 
     class Meta:
         verbose_name = "Tagung"
         verbose_name_plural = "Tagungen"
-        ordering = ['title']
+        ordering = ['-year']
+        constraints = [
+            models.CheckConstraint(
+                check=Q(year__gte=2000) & Q(year__lte=2050),
+                name='valid_year',
+                violation_error_message="Jahr muss zwischen 2000 und 2050 liegen.",
+            ),
+        ]
 
     def __str__(self) -> str:
-        return self.title
+        return f"{self.title} ({self.year})"
 
     def get_absolute_url(self):
         return reverse('congresses:congress-detail', kwargs={'pk': self.pk})

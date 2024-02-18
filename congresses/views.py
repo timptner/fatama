@@ -50,6 +50,9 @@ class AttendanceDetailsView(LoginRequiredMixin, UserPassesTestMixin, DetailView)
 class CongressDetailView(LoginRequiredMixin, DetailView):
     model = Congress
 
+    def get_object(self, queryset=None):
+        return get_object_or_404(Congress, year=self.kwargs['year'])
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data()
         context['user_attendance'] = self.object.get_attendance(self.request.user)
