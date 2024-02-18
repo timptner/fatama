@@ -1,0 +1,17 @@
+{% extends 'fatama/base.html' %}
+
+{% load markdown %}
+
+{% block title %}
+    {{ block.super }} | {{ flatpage.title }}
+{% endblock %}
+
+{% block content %}
+    <div class="container is-max-desktop">
+        <h3 class="title">{{ flatpage.title }}</h3>
+
+        <div class="content">
+            {% render flatpage.content %}
+        </div>
+    </div>
+{% endblock %}

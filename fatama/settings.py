@@ -20,10 +20,14 @@ ALLOWED_HOSTS = (['127.0.0.1', 'localhost'] +
 
 # Application definition
 
+SITE_ID = 1
+
 INSTALLED_APPS = [
     'accounts',
     'congresses',
     'fontawesomefree',
+    'django.contrib.flatpages',
+    'django.contrib.sites',
     'django.forms',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -59,6 +63,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                'markdown': 'fatama.templatetags.markdown',
+            },
         },
     },
 ]
