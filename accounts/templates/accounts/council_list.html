@@ -1,0 +1,57 @@
+{% extends 'fatama/base.html' %}
+
+{% block title %}
+    {{ block.super }} | Gremien
+{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <div class="container is-max-desktop">
+            <h3 class="title">Gremien</h3>
+            <h5 class="subtitle">Verzeichnis aller Gremien</h5>
+
+            {% if not user.council %}
+                <article class="message is-warning">
+                    <div class="message-header">
+                        Benutzer ist keinem Gremium zugewiesen
+                    </div>
+                    <div class="message-body">
+                        <div class="block">
+                            Dein Konto ist noch keinem Gremium zugewiesen. Bitte lege ein neues Gremium an, da du dich
+                            sonst zu keiner Tagung anmelden kannst. Wenn dein Gremium bereits im Verzeichnis aufgeführt
+                            sein sollte, melde dich bitte bei der austragenden Fachschaft, um das Gremium auf dich
+                            umschreiben zu lassen.
+                        </div>
+                        <div class="buttons">
+                            <a class="button is-warning" href="{% url 'accounts:create_council' %}">Gremium erstellen</a>
+                        </div>
+                    </div>
+                </article>
+            {% endif %}
+
+            {% regroup council_list by university as university_list %}
+            {% for university in university_list %}
+                <div class="box">
+                    <p class="title is-5">{{ university.grouper }}</p>
+
+                    <ul>
+                    {% for council in university.list %}
+                        <li>
+                            {{ council.name }}
+                            {% if council == user.council %}
+                                <span class="tag is-primary">Dein Gremium</span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </div>
+            {% empty %}
+                <article class="message is-info">
+                    <div class="message-body">
+                        Es wurden noch keine Gremien registriert.
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

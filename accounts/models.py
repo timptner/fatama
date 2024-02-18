@@ -5,8 +5,9 @@ from django.utils import timezone
 
 class Council(models.Model):
     owner = models.OneToOneField(User, on_delete=models.PROTECT)
-    university = models.CharField("Universität", max_length=150)
-    name = models.CharField("Name")
+    university = models.CharField("Universität", max_length=150,
+                                  help_text="Vermeide Akronyme.")
+    name = models.CharField("Name", help_text="Name deiner Fachschaft.")
 
     class Meta:
         verbose_name = "Gremium"

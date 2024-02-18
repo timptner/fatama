@@ -6,7 +6,7 @@ from django.core.exceptions import PermissionDenied
 from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, TemplateView
+from django.views.generic import CreateView, DetailView, ListView, TemplateView
 
 from accounts.forms import (AuthenticationForm, CouncilForm, InviteForm,
                             PasswordResetForm, SetPasswordForm, UserForm)
@@ -16,7 +16,7 @@ from accounts.models import Council, Invite
 class CouncilCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     form_class = CouncilForm
     success_message = "Gremium wurde erfolgreich erstellt."
-    success_url = reverse_lazy('accounts:council_detail')
+    success_url = reverse_lazy('accounts:council_list')
     template_name = 'accounts/council_form.html'
 
     def get_form_kwargs(self):
@@ -25,15 +25,8 @@ class CouncilCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return kwargs
 
 
-class CouncilDetailView(LoginRequiredMixin, DetailView):
+class CouncilListView(LoginRequiredMixin, ListView):
     model = Council
-
-    def get_object(self, queryset=None):
-        try:
-            council = Council.objects.get(owner=self.request.user)
-        except Council.DoesNotExist:
-            council = None
-        return council
 
 
 class InviteCreateView(PermissionRequiredMixin, SuccessMessageMixin, CreateView):

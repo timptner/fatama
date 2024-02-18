@@ -1,19 +1,27 @@
-{% extends 'accounts/base.html' %}
+{% extends 'fatama/base.html' %}
 
-{% block subcontent %}
-    <h3 class="title">Gremium erstellen</h3>
+{% block title %}
+    {{ block.super }} | Gremium registrieren
+{% endblock %}
 
-    {% include 'fatama/messages_snippet.html' %}
+{% block content %}
+    <section class="section">
+        <div class="container is-max-desktop">
+            <h3 class="title">Gremium registrieren</h3>
+            <h5 class="subtitle">Erstelle ein neues Gremium, welches dir zugeordnet wird</h5>
 
-    <form method="post">
-        {% csrf_token %}
+            <form method="post">
+                {% csrf_token %}
 
-        {{ form }}
+                {{ form }}
 
-        <div class="field is-grouped">
-            <div class="control">
-                <button type="submit" class="button is-primary">Anlegen</button>
-            </div>
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">Erstellen</button>
+                        <a href="{% url 'accounts:council_list' %}" class="button is-light">Abbrechen</a>
+                    </div>
+                </div>
+            </form>
         </div>
-    </form>
+    </section>
 {% endblock %}
