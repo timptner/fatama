@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ['SECRET_KEY']
 
-DEBUG = string_to_boolean(os.getenv('DEBUG', 'True'))
+DEBUG = string_to_boolean(os.getenv('DEBUG', 'false'))
 
 ALLOWED_HOSTS = (['127.0.0.1', 'localhost'] +
                  [host for host in (os.getenv('ALLOWED_HOSTS', 'www.fatama2024.de')
@@ -117,6 +117,8 @@ USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
+
+STATIC_ROOT = os.getenv('STATIC_ROOT', str((BASE_DIR / 'static').absolute()))
 
 STATIC_URL = 'static/'
 
