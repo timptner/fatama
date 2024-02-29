@@ -15,6 +15,7 @@
             <div class="navbar-start">{% current_year as year %}
                 <a class="navbar-item" href="{% url 'congresses:congress_detail' year %}">Tagung</a>
                 <a class="navbar-item" href="{% url 'accounts:council_list' %}">Gremien</a>
+                <a class="navbar-item" href="{% url 'workshops:workshop_list' %}">Seminare</a>
             </div>
             {% endif %}
             <div class="navbar-end">

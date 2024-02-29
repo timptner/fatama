@@ -1,0 +1,23 @@
+{% extends 'fatama/base.html' %}
+
+{% block title %}
+    {{ block.super }} | Seminare
+{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <div class="container is-max-desktop">
+            <h3 class="title">Seminare</h3>
+            <h5 class="subtitle">Verzeichnis aller Seminare</h5>
+
+            {% for workshop in workshop_list %}
+            {% empty %}
+                <article class="message is-info">
+                    <div class="message-body">
+                        Es wurden noch keine Seminare eingereicht.
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock %}

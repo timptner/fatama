@@ -25,6 +25,7 @@ SITE_ID = 1
 INSTALLED_APPS = [
     'accounts',
     'congresses',
+    'workshops',
     'fontawesomefree',
     'django.contrib.flatpages',
     'django.contrib.sites',

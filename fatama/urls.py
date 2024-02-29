@@ -10,4 +10,5 @@ urlpatterns = [
     path('congresses/', include('congresses.urls')),
     path('privacy/', views.flatpage, {'url': '/privacy/'}, name='privacy'),
     path('site-notice/', views.flatpage, {'url': '/site-notice/'}, name='site_notice'),
+    path('workshops/', include('workshops.urls')),
 ]
