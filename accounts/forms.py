@@ -9,12 +9,13 @@ from django.contrib.auth import forms as auth_forms
 from django.contrib.auth.password_validation import password_validators_help_texts
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
 from django.core.mail import send_mail
 from django.urls import reverse_lazy
 from django.utils import timezone
 
 from accounts.models import Council, Invite, Profile
-from fatama.forms import ModelForm
+from fatama.forms import ModelForm, Form
 
 
 class AuthenticationForm(auth_forms.AuthenticationForm):
@@ -47,28 +48,50 @@ class CouncilForm(ModelForm):
         return council
 
 
-class InviteForm(ModelForm):
+class InviteForm(Form):
+    emails = forms.CharField(label="E-Mail-Adressen", widget=forms.Textarea(attrs={'class': 'textarea', 'rows': 5}))
+
     def __init__(self, user, *args, **kwargs) -> None:
-        self.user = user
         super().__init__(*args, **kwargs)
+        self.user = user
 
-    class Meta:
-        model = Invite
-        fields = ['recipient']
-        widgets = {
-            'recipient': forms.EmailInput(attrs={'class': 'input'}),
-        }
+    def clean_emails(self) -> list[str]:
+        data = self.cleaned_data['emails']
+        emails = [email.strip() for email in data.split(',')]
+        for email in emails:
+            try:
+                validate_email(email)
+            except ValidationError:
+                raise ValidationError(f"'{email}' ist keine gültige E-Mail-Adresse", code='invalid')
+        return emails
 
-    def save(self, commit: bool = True) -> Invite:
-        token = secrets.token_urlsafe(settings.INVITE_TOKEN_LENGTH)
-        expired_at = timezone.now() + timedelta(days=settings.INVITE_EXPIRATION)
-        invite = super().save(commit=False)
-        invite.token = token
-        invite.sender = self.user
-        invite.expired_at = expired_at
-        if commit:
-            invite.save()
-        return invite
+    @staticmethod
+    def send_mail(request, invite: Invite) -> None:
+        name = invite.sender.get_full_name()
+        scheme = 'https' if request.is_secure() else 'http'
+        host = request.get_host()
+        path = reverse_lazy('accounts:register', kwargs={'token': invite.token})
+        url = f'{scheme}://{host}{path}'
+        send_mail(
+            "Einladung zur FaTaMa2024",
+            f"""Hallo,
+
+du wurdest von {name} eingeladen, dich für die Fachschaftentagung Maschinenbau 2024 zu registrieren.
+
+{url}
+
+Die Einladung ist bis {invite.expired_at} gültig.""",
+            None,
+            [invite.recipient],
+        )
+
+    def save(self, request) -> None:
+        emails = self.cleaned_data['emails']
+        for email in emails:
+            token = secrets.token_urlsafe(settings.INVITE_TOKEN_LENGTH)
+            expired_at = timezone.now() + timedelta(days=settings.INVITE_EXPIRATION)
+            invite = Invite.objects.create(token=token, recipient=email, sender=self.user, expired_at=expired_at)
+            self.send_mail(request, invite)
 
 
 class PasswordResetForm(auth_forms.PasswordResetForm):

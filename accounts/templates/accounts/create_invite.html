@@ -3,7 +3,13 @@
 {% block subcontent %}
     <h3 class="title">Einladung erstellen</h3>
 
-    {% include 'fatama/messages.html' %}
+    <article class="message is-info">
+        <div class="message-body">
+            Jeder Empfänger erhält eine individuelle E-Mail mit persönlichem
+            Link zur Registrierung. Der Link ist für {{ expiration }} Tage
+            gültig und kann einmalig zur Registrierung verwendet werden.
+        </div>
+    </article>
 
     <form method="post">
         {% csrf_token %}

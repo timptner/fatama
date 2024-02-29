@@ -1,12 +1,12 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.contrib.auth import logout, views as auth_views
 from django.core.exceptions import PermissionDenied
-from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, DetailView, ListView, TemplateView
+from django.views.generic import CreateView, FormView, ListView, TemplateView
 
 from accounts.forms import (AuthenticationForm, CouncilForm, InviteForm,
                             PasswordResetForm, SetPasswordForm, UserForm)
@@ -29,12 +29,17 @@ class CouncilListView(LoginRequiredMixin, ListView):
     model = Council
 
 
-class InviteCreateView(PermissionRequiredMixin, SuccessMessageMixin, CreateView):
+class InviteCreateView(PermissionRequiredMixin, SuccessMessageMixin, FormView):
     form_class = InviteForm
     permission_required = 'accounts.can_invite'
     template_name = 'accounts/create_invite.html'
     success_url = reverse_lazy('accounts:create_invite')
-    success_message = "Einladung wurde per E-Mail an <strong>%(recipient)s</strong> verschickt."
+    success_message = "Einladungen wurde per E-Mail verschickt."
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['expiration'] = settings.INVITE_EXPIRATION
+        return context
 
     def get_form_kwargs(self) -> dict:
         kwargs = super().get_form_kwargs()
@@ -42,29 +47,8 @@ class InviteCreateView(PermissionRequiredMixin, SuccessMessageMixin, CreateView)
         return kwargs
 
     def form_valid(self, form):
-        response = super().form_valid(form)
-        self.send_mail()
-        return response
-
-    def send_mail(self) -> None:
-        invite: Invite = self.object
-        name = invite.sender.get_full_name()
-        scheme = 'https' if self.request.is_secure() else 'http'
-        host = self.request.get_host()
-        path = reverse_lazy('accounts:register', kwargs={'token': invite.token})
-        url = f'{scheme}://{host}{path}'
-        send_mail(
-            "Einladung zur FaTaMa2024",
-            f"""Hallo,
-
-du wurdest von {name} eingeladen, dich für die Fachschaftentagung Maschinenbau 2024 zu registrieren.
-
-{url}
-
-Die Einladung ist bis {invite.expired_at} gültig.""",
-            None,
-            [invite.recipient],
-        )
+        form.save(self.request)
+        return super().form_valid(form)
 
 
 class LoginView(auth_views.LoginView):
