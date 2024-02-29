@@ -107,12 +107,25 @@ class Portrait(models.Model):
         STUDENT_CARD: "Im Studentenausweis inbegriffen",
         INDEPENDENT: "Eigenständig erworben",
     }
+    EXTRA_SMALL = 'XS'
+    SMALL = 'S'
+    MEDIUM = 'M'
+    LARGE = 'L'
+    EXTRA_LARGE = 'XL'
+    SIZE_CHOICES = {
+        EXTRA_SMALL: "Sehr klein (XS)",
+        SMALL: "Klein (S)",
+        MEDIUM: "Mittel (M)",
+        LARGE: "Groß (L)",
+        EXTRA_LARGE: "Sehr groß (XL)",
+    }
     participant = models.OneToOneField(Participant, on_delete=models.CASCADE)
     diet = models.CharField("Ernährungsweise", choices=DIET_CHOICES, max_length=2)
     intolerances = models.CharField("Unverträglichkeiten", max_length=200, blank=True)
     railcard = models.CharField("Deutschlandticket", choices=RAILCARD_CHOICES, max_length=4)
     certificate = models.FileField("Immatrikulationsbescheinigung", upload_to=participant_directory_path,
                                    validators=[FileExtensionValidator(['pdf'])], null=True)
+    size = models.CharField("Konfektionsgröße", choices=SIZE_CHOICES, max_length=2)
 
     class Meta:
         verbose_name = "Porträt"

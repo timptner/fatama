@@ -79,15 +79,17 @@ def get_human_size(size: float) -> str:
 class PortraitForm(ModelForm):
     class Meta:
         model = Portrait
-        fields = ['diet', 'intolerances', 'railcard', 'certificate']
+        fields = ['diet', 'intolerances', 'size', 'railcard', 'certificate']
         widgets = {
             'diet': Select(),
             'intolerances': forms.TextInput(attrs={'class': 'input'}),
+            'size': Select(),
             'railcard': Select(),
             'certificate': FileInput(attrs={'accept': '.pdf'}),
         }
         help_texts = {
             'intolerances': "Optional.",
+            'size': "Unisex T-Shirt.",
             'certificate': "PDF-Datei. Maximal 2 MB."
         }
 
