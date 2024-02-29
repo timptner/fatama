@@ -41,6 +41,11 @@ class Invite(models.Model):
     is_expired.boolean = True
     is_expired.short_description = "Expired"
 
+    def is_active(self) -> bool:
+        return not self.is_expired()
+    is_active.boolean = True
+    is_active.short_description = "Active"
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)

@@ -17,7 +17,7 @@ class ProfileAdmin(admin.ModelAdmin):
 @admin.register(Invite)
 class InviteAdmin(admin.ModelAdmin):
     readonly_fields = ['token']
-    list_display = ['recipient', 'sender', 'is_expired']
+    list_display = ['recipient', 'sender', 'is_active']
     list_filter = ['sender']
     date_hierarchy = 'expired_at'
 
