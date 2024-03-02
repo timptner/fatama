@@ -1,3 +1,4 @@
+import logging
 import secrets
 
 from datetime import timedelta
@@ -189,19 +190,10 @@ class ProfileViewTest(TestCase):
 
 class RegistrationViewTest(TestCase):
     def setUp(self) -> None:
+        logging.disable(logging.WARNING)
         Congress.objects.create(title="Tagung", year=2024)
         self.user = User.objects.create_user('john')
-        token = secrets.token_urlsafe(settings.INVITE_TOKEN_LENGTH)
-        expired_at = timezone.now() + timedelta(days=settings.INVITE_EXPIRATION)
-        self.invite = Invite.objects.create(token=token, sender=self.user, expired_at=expired_at)
-        self.path = reverse('accounts:register', kwargs={'token': self.invite.token})
-
-    def test_public_view(self) -> None:
-        response = self.client.get(self.path)
-        self.assertContains(response, 'Registrieren')
-
-    def test_public_form_view(self) -> None:
-        data = {
+        self.data = {
             'user-username': 'jane',
             'user-first_name': 'Jane',
             'user-last_name': 'Doe',
@@ -209,5 +201,39 @@ class RegistrationViewTest(TestCase):
             'password-new_password1': 'super53cre7',
             'password-new_password2': 'super53cre7',
         }
-        response = self.client.post(self.path, data=data)
+
+    def _get_valid_token(self) -> str:
+        token = secrets.token_urlsafe(settings.INVITE_TOKEN_LENGTH)
+        expired_at = timezone.now() + timedelta(days=settings.INVITE_EXPIRATION)
+        invite = Invite.objects.create(token=token, sender=self.user, expired_at=expired_at)
+        return invite.token
+
+    def _get_expired_token(self) -> str:
+        token = secrets.token_urlsafe(settings.INVITE_TOKEN_LENGTH)
+        expired_at = timezone.now() - timedelta(hours=1)
+        invite = Invite.objects.create(token=token, sender=self.user, expired_at=expired_at)
+        return invite.token
+
+    def test_public_view(self) -> None:
+        token = self._get_valid_token()
+        path = reverse('accounts:register', kwargs={'token': token})
+        response = self.client.get(path)
+        self.assertContains(response, 'Registrieren')
+
+    def test_valid_token(self) -> None:
+        token = self._get_valid_token()
+        path = reverse('accounts:register', kwargs={'token': token})
+        response = self.client.post(path, data=self.data)
         self.assertRedirects(response, reverse('accounts:login'))
+
+    def test_invalid_token(self) -> None:
+        token = 'invalid'
+        path = reverse('accounts:register', kwargs={'token': token})
+        response = self.client.post(path, data=self.data)
+        self.assertEqual(response.status_code, 404)
+
+    def test_expired_token(self) -> None:
+        token = self._get_expired_token()
+        path = reverse('accounts:register', kwargs={'token': token})
+        response = self.client.post(path, data=self.data)
+        self.assertEqual(response.status_code, 403)
