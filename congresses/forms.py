@@ -103,7 +103,7 @@ class PortraitForm(ModelForm):
             human_size = get_human_size(certificate.size)
             raise ValidationError(
                 "Datei ist zu groß. (%(human_size)s)",
-                params={'size': human_size},
+                params={'human_size': human_size},
                 code='size_exceeded',
             )
         return certificate
