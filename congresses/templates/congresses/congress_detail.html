@@ -59,13 +59,28 @@
 
             <h4 class="title is-4">Teilnehmende Gremien</h4>
             <div class="columns is-multiline">
-                {% for attendance in congress.attendance_set.all %}
+                {% regroup congress.attendance_set.all by council.university as university_list %}
+                {% for university, attendance_list in university_list %}
                     <div class="column is-one-third">
                         <div class="box">
-                            {% with attendance.council as council %}
-                                <p class="has-text-weight-bold">{{ council.name }}</p>
-                                <p>{{ council.university }}</p>
-                            {% endwith %}
+                            <p class="has-text-weight-bold">
+                                <span class="icon-text">
+                                    <span class="icon">
+                                        <i class="fa-solid fa-university"></i>
+                                    </span>
+                                    <span>{{ university }}</span>
+                                </span>
+                            </p>
+                            {% for attendance in attendance_list %}
+                                <p>
+                                    <span class="icon-text">
+                                        <span class="icon">
+                                            <i class="fa-solid fa-people-group fa-fw"></i>
+                                        </span>
+                                        <span>{{ attendance.council.name }}</span>
+                                    </span>
+                                </p>
+                            {% endfor %}
                         </div>
                     </div>
                 {% empty %}

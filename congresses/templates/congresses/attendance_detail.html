@@ -15,54 +15,54 @@
                     <h5 class="title is-5">Tagung</h5>
                     <div class="block">
                         {% with attendance.congress as congress %}
-                        <p>
-                            <span class="icon-text">
-                                <span class="icon">
-                                    <i class="fa-solid fa-flag"></i>
+                            <p>
+                                <span class="icon-text">
+                                    <span class="icon">
+                                        <i class="fa-solid fa-flag"></i>
+                                    </span>
+                                    <span>{{ congress.title }}</span>
                                 </span>
-                                <span>{{ congress.title }}</span>
-                            </span>
-                        </p>
-                        <p>
-                            <span class="icon-text">
-                                <span class="icon">
-                                    <i class="fa-solid fa-location-pin"></i>
+                            </p>
+                            <p>
+                                <span class="icon-text">
+                                    <span class="icon">
+                                        <i class="fa-solid fa-location-pin"></i>
+                                    </span>
+                                    <span>{{ congress.location }}</span>
                                 </span>
-                                <span>{{ congress.location }}</span>
-                            </span>
-                        </p>
-                        <p>
-                            <span class="icon-text">
-                                <span class="icon">
-                                    <i class="fa-solid fa-calendar"></i>
+                            </p>
+                            <p>
+                                <span class="icon-text">
+                                    <span class="icon">
+                                        <i class="fa-solid fa-calendar"></i>
+                                    </span>
+                                    <span>{{ congress.year }}</span>
                                 </span>
-                                <span>{{ congress.year }}</span>
-                            </span>
-                        </p>
+                            </p>
                         {% endwith %}
                     </div>
                 </div>
 
                 <div class="column">
-                    <h5 class="title is-5">Gremium</h5>
+                    <h5 class="title is-5">Dein Gremium</h5>
                     <div class="block">
                         {% with attendance.council as council %}
-                        <p>
-                            <span class="icon-text">
-                                <span class="icon">
-                                    <i class="fa-solid fa-people-group"></i>
+                            <p>
+                                <span class="icon-text">
+                                    <span class="icon">
+                                        <i class="fa-solid fa-building-columns"></i>
+                                    </span>
+                                    <span>{{ user.council.university }}</span>
                                 </span>
-                                <span>{{ user.council.name }}</span>
-                            </span>
-                        </p>
-                        <p>
-                            <span class="icon-text">
-                                <span class="icon">
-                                    <i class="fa-solid fa-building-columns"></i>
+                            </p>
+                            <p>
+                                <span class="icon-text">
+                                    <span class="icon">
+                                        <i class="fa-solid fa-people-group"></i>
+                                    </span>
+                                    <span>{{ user.council.name }}</span>
                                 </span>
-                                <span>{{ user.council.university }}</span>
-                            </span>
-                        </p>
+                            </p>
                         {% endwith %}
                     </div>
                 </div>
