@@ -12,62 +12,47 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from accounts.models import Invite
+from congresses.models import Congress
 
 
 class CouncilCreateViewTest(TestCase):
     def setUp(self) -> None:
+        Congress.objects.create(title="Tagung", year=2024)
         self.user = User.objects.create_user(username='john')
         self.path = reverse('accounts:create_council')
 
-    def test_get_view(self) -> None:
+    def test_public_view(self) -> None:
         response = self.client.get(self.path)
         path = reverse('accounts:login')
         self.assertRedirects(response, f'{path}?next={self.path}')
 
-    def test_user_get_view(self) -> None:
-        self.client.force_login(self.user)
-        response = self.client.get(self.path)
-        self.assertContains(response, 'Gremium erstellen')
-
-    def test_post_view(self) -> None:
+    def test_public_form_view(self) -> None:
         response = self.client.post(self.path)
-        path = reverse('accounts:login')
-        self.assertRedirects(response, f'{path}?next={self.path}')
-
-    def test_user_post_view(self) -> None:
-        data = {
-            'university': 'Otto-von-Guericke-Universität Magdeburg',
-            'name': 'Fachschaftsrat Maschinenbau',
-        }
-        self.client.force_login(self.user)
-        response = self.client.post(self.path, data=data)
-        self.assertRedirects(response, reverse('accounts:council_detail'))
-
-
-class CouncilDetailViewTest(TestCase):
-    def setUp(self) -> None:
-        self.user = User.objects.create_user(username='john')
-        self.path = reverse('accounts:council_detail')
-
-    def test_view(self) -> None:
-        response = self.client.get(self.path)
         path = reverse('accounts:login')
         self.assertRedirects(response, f'{path}?next={self.path}')
 
     def test_user_view(self) -> None:
         self.client.force_login(self.user)
         response = self.client.get(self.path)
-        self.assertContains(response, 'Gremium')
+        self.assertContains(response, 'Gremium registrieren')
+
+    def test_user_form_view(self) -> None:
+        data = {
+            'university': 'Otto-von-Guericke-Universität Magdeburg',
+            'name': 'Fachschaftsrat Maschinenbau',
+        }
+        self.client.force_login(self.user)
+        response = self.client.post(self.path, data=data)
+        self.assertRedirects(response, reverse('accounts:council_list'))
 
 
-class InviteViewTest(TestCase):
+class CouncilListViewTest(TestCase):
     def setUp(self) -> None:
-        self.user = User.objects.create_user('john')
-        can_invite = Permission.objects.get(codename='can_invite')
-        self.user.user_permissions.add(can_invite)
-        self.path = reverse('accounts:create_invite')
+        Congress.objects.create(title="Tagung", year=2024)
+        self.user = User.objects.create_user(username='john')
+        self.path = reverse('accounts:council_list')
 
-    def test_view(self) -> None:
+    def test_public_view(self) -> None:
         response = self.client.get(self.path)
         path = reverse('accounts:login')
         self.assertRedirects(response, f"{path}?next={self.path}")
@@ -75,39 +60,80 @@ class InviteViewTest(TestCase):
     def test_user_view(self) -> None:
         self.client.force_login(self.user)
         response = self.client.get(self.path)
+        self.assertContains(response, "Verzeichnis aller Gremien")
+
+
+class InviteCreateViewTest(TestCase):
+    def setUp(self) -> None:
+        Congress.objects.create(title="Tagung", year=2024)
+        self.user = User.objects.create_user('john')
+        can_invite = Permission.objects.get(codename='can_invite')
+        self.user.user_permissions.add(can_invite)
+        self.path = reverse('accounts:create_invite')
+
+    def test_public_view(self) -> None:
+        response = self.client.get(self.path)
+        path = reverse('accounts:login')
+        self.assertRedirects(response, f"{path}?next={self.path}")
+
+    def test_public_form_view(self) -> None:
+        response = self.client.post(self.path)
+        path = reverse('accounts:login')
+        self.assertRedirects(response, f'{path}?next={self.path}')
+
+    def test_user_view(self) -> None:
+        self.client.force_login(self.user)
+        response = self.client.get(self.path)
         self.assertContains(response, "Einladung erstellen")
+
+    def test_user_form_view(self) -> None:
+        data = {
+            'emails': 'john.doe@example.org, jane.doe@example.org',
+        }
+        self.client.force_login(self.user)
+        response = self.client.post(self.path, data=data)
+        self.assertRedirects(response, reverse('accounts:create_invite'))
 
 
 class LoginViewTest(TestCase):
     def setUp(self) -> None:
+        Congress.objects.create(title="Tagung", year=2024)
         self.path = reverse('accounts:login')
 
-    def test_view(self) -> None:
+    def test_public_view(self) -> None:
         response = self.client.get(self.path)
         self.assertContains(response, "Anmelden")
 
 
 class LogoutView(TestCase):
     def setUp(self) -> None:
-        self.user = User.objects.create_user('john')
+        Congress.objects.create(title="Tagung", year=2024)
+        self.user = User.objects.create_user(username='john')
         self.path = reverse('accounts:logout')
 
-    def test_get_view(self) -> None:
+    def test_public_view(self) -> None:
         response = self.client.get(self.path)
         self.assertRedirects(response, reverse('accounts:login'))
 
-    def test_user_get_view(self) -> None:
+    def test_public_form_view(self) -> None:
+        response = self.client.post(self.path)
+        self.assertRedirects(response, reverse('accounts:login'))
+
+    def test_user_view(self) -> None:
         self.client.force_login(self.user)
         response = self.client.get(self.path)
         self.assertContains(response, "Abmelden")
 
-    def test_post_view(self) -> None:
+    def test_user_form_view(self) -> None:
+        self.client.force_login(self.user)
         response = self.client.post(self.path)
         self.assertRedirects(response, reverse('accounts:login'))
+        self.assertIsNone(self.client.session.__dict__['_SessionBase__session_key'])
 
 
 class PasswortResetView(TestCase):
     def setUp(self) -> None:
+        Congress.objects.create(title="Tagung", year=2024)
         self.path = reverse('accounts:password_reset')
         self.user = User.objects.create_user(
             username='john',
@@ -115,11 +141,11 @@ class PasswortResetView(TestCase):
             first_name='John',
         )
 
-    def test_get_view(self) -> None:
+    def test_public_view(self) -> None:
         response = self.client.get(self.path)
         self.assertContains(response, "Passwort zurücksetzen")
 
-    def test_post_view(self) -> None:
+    def test_public_form_view(self) -> None:
         data = {
             'email': self.user.email,
         }
@@ -129,6 +155,7 @@ class PasswortResetView(TestCase):
 
 class PasswortResetConfirmView(TestCase):
     def setUp(self) -> None:
+        Congress.objects.create(title="Tagung", year=2024)
         self.user = User.objects.create_user(username='john')
         self.kwargs = {
             'uidb64': urlsafe_base64_encode(force_bytes(self.user.pk)),
@@ -136,7 +163,7 @@ class PasswortResetConfirmView(TestCase):
         }
         self.path = reverse('accounts:password_reset_confirm', kwargs=self.kwargs)
 
-    def test_get_view(self) -> None:
+    def test_public_view(self) -> None:
         response = self.client.get(self.path)
         self.kwargs.update({'token': 'set-password'})
         next_path = reverse('accounts:password_reset_confirm', kwargs=self.kwargs)
@@ -145,10 +172,11 @@ class PasswortResetConfirmView(TestCase):
 
 class ProfileViewTest(TestCase):
     def setUp(self) -> None:
+        Congress.objects.create(title="Tagung", year=2024)
         self.user = User.objects.create_user('john')
         self.path = reverse('accounts:profile')
 
-    def test_view(self) -> None:
+    def test_public_view(self) -> None:
         response = self.client.get(self.path)
         path = reverse('accounts:login')
         self.assertRedirects(response, f'{path}?next={self.path}')
@@ -161,17 +189,18 @@ class ProfileViewTest(TestCase):
 
 class RegistrationViewTest(TestCase):
     def setUp(self) -> None:
+        Congress.objects.create(title="Tagung", year=2024)
         self.user = User.objects.create_user('john')
         token = secrets.token_urlsafe(settings.INVITE_TOKEN_LENGTH)
         expired_at = timezone.now() + timedelta(days=settings.INVITE_EXPIRATION)
         self.invite = Invite.objects.create(token=token, sender=self.user, expired_at=expired_at)
         self.path = reverse('accounts:register', kwargs={'token': self.invite.token})
 
-    def test_get_view(self) -> None:
+    def test_public_view(self) -> None:
         response = self.client.get(self.path)
         self.assertContains(response, 'Registrieren')
 
-    def test_post_view(self) -> None:
+    def test_public_form_view(self) -> None:
         data = {
             'user-username': 'jane',
             'user-first_name': 'Jane',
