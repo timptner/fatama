@@ -59,10 +59,6 @@ class CongressDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class CongressListView(LoginRequiredMixin, ListView):
-    model = Congress
-
-
 class ParticipantCreateView(LoginRequiredMixin, SuccessMessageMixin, UserPassesTestMixin, CreateView):
     form_class = ParticipantForm
     success_message = "Teilnehmer wurde hinzugefügt."
