@@ -1,7 +1,7 @@
-<nav class="navbar is-light" role="navigation" aria-label="main navigation">{% load congresses %}
+<nav class="navbar is-light" role="navigation" aria-label="main navigation">
     <div class="container">
         <div class="navbar-brand">
-            <a class="navbar-item" href="/">FaTaMa {% current_year %}</a>
+            <a class="navbar-item" href="/">FaTaMa {{ the_congress.year }}</a>
 
             <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="mainNavbar">
                 <span aria-hidden="true"></span>
@@ -12,8 +12,19 @@
 
         <div id="mainNavbar" class="navbar-menu">
             {% if user.is_authenticated %}
-            <div class="navbar-start">{% current_year as year %}
-                <a class="navbar-item" href="{% url 'congresses:congress_detail' year %}">Tagung</a>
+            <div class="navbar-start">
+                {% if the_congress %}
+                    <a class="navbar-item" href="{% url 'congresses:congress_detail' the_congress.year %}">Tagung</a>
+                {% else %}
+                    <div class="navbar-item has-text-grey-light">
+                        <p class="icon-text">
+                            <span class="icon">
+                                <i class="fa-solid fa-lock"></i>
+                            </span>
+                            <span>Tagung</span>
+                        </p>
+                    </div>
+                {% endif %}
                 <a class="navbar-item" href="{% url 'accounts:council_list' %}">Gremien</a>
             </div>
             {% endif %}
