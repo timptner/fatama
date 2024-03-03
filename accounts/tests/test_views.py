@@ -18,7 +18,6 @@ from congresses.models import Congress
 
 class CouncilCreateViewTest(TestCase):
     def setUp(self) -> None:
-        Congress.objects.create(title="Tagung", year=2024)
         self.user = User.objects.create_user(username='john')
         self.path = reverse('accounts:create_council')
 
@@ -49,7 +48,6 @@ class CouncilCreateViewTest(TestCase):
 
 class CouncilListViewTest(TestCase):
     def setUp(self) -> None:
-        Congress.objects.create(title="Tagung", year=2024)
         self.user = User.objects.create_user(username='john')
         self.path = reverse('accounts:council_list')
 
@@ -66,7 +64,6 @@ class CouncilListViewTest(TestCase):
 
 class InviteCreateViewTest(TestCase):
     def setUp(self) -> None:
-        Congress.objects.create(title="Tagung", year=2024)
         self.user = User.objects.create_user('john')
         can_invite = Permission.objects.get(codename='can_invite')
         self.user.user_permissions.add(can_invite)
@@ -98,7 +95,6 @@ class InviteCreateViewTest(TestCase):
 
 class LoginViewTest(TestCase):
     def setUp(self) -> None:
-        Congress.objects.create(title="Tagung", year=2024)
         self.path = reverse('accounts:login')
 
     def test_public_view(self) -> None:
@@ -108,7 +104,6 @@ class LoginViewTest(TestCase):
 
 class LogoutView(TestCase):
     def setUp(self) -> None:
-        Congress.objects.create(title="Tagung", year=2024)
         self.user = User.objects.create_user(username='john')
         self.path = reverse('accounts:logout')
 
@@ -134,7 +129,6 @@ class LogoutView(TestCase):
 
 class PasswortResetView(TestCase):
     def setUp(self) -> None:
-        Congress.objects.create(title="Tagung", year=2024)
         self.path = reverse('accounts:password_reset')
         self.user = User.objects.create_user(
             username='john',
@@ -156,7 +150,6 @@ class PasswortResetView(TestCase):
 
 class PasswortResetConfirmView(TestCase):
     def setUp(self) -> None:
-        Congress.objects.create(title="Tagung", year=2024)
         self.user = User.objects.create_user(username='john')
         self.kwargs = {
             'uidb64': urlsafe_base64_encode(force_bytes(self.user.pk)),
@@ -173,7 +166,6 @@ class PasswortResetConfirmView(TestCase):
 
 class ProfileViewTest(TestCase):
     def setUp(self) -> None:
-        Congress.objects.create(title="Tagung", year=2024)
         self.user = User.objects.create_user('john')
         self.path = reverse('accounts:profile')
 
@@ -191,7 +183,6 @@ class ProfileViewTest(TestCase):
 class RegistrationViewTest(TestCase):
     def setUp(self) -> None:
         logging.disable(logging.WARNING)
-        Congress.objects.create(title="Tagung", year=2024)
         self.user = User.objects.create_user('john')
         self.data = {
             'user-username': 'jane',
