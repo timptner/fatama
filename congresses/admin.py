@@ -28,6 +28,20 @@ class AttendanceAdmin(admin.ModelAdmin):
 @admin.register(Congress)
 class CongressAdmin(admin.ModelAdmin):
     list_display = ['title', 'location', 'year']
+    fieldsets = [
+        (
+            None,
+            {
+                'fields': ['year', 'location', 'title', 'message'],
+            },
+        ),
+        (
+            "Organisatoren",
+            {
+                'fields': ['support_email', 'support_team'],
+            }
+        ),
+    ]
 
 
 @admin.register(Participant)

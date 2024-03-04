@@ -17,6 +17,8 @@ class Congress(models.Model):
     title = models.CharField("Titel", max_length=50,
                              help_text="Verwende einen knackigen Titel und nicht nur \"FaTaMa\".")
     message = models.TextField("Botschaft", blank=True)
+    support_email = models.EmailField("E-Mail-Adresse", help_text="Erreichbarkeit der Organisatoren.")
+    support_team = models.CharField("Team", help_text="Namen der Organisatoren. (Verwendung als Signatur in E-Mails.)")
 
     class Meta:
         verbose_name = "Tagung"
