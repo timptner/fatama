@@ -95,6 +95,27 @@ class InviteForm(Form):
             self.send_mail(request, invite)
 
 
+class PasswordChangeForm(auth_forms.PasswordChangeForm):
+    template_name_label = 'fatama/forms/label.html'
+
+    def __init__(self, user, *args, **kwargs) -> None:
+        super().__init__(user, *args, **kwargs)
+        fields = {
+            'old_password': "Altes Passwort",
+            'new_password1': "Neues Passwort",
+            'new_password2': "Neues Passwort wiederholen",
+        }
+        for field, label in fields.items():
+            self.fields[field].widget.attrs.update({'class': 'input'})
+            self.fields[field].label = label
+        self.fields['new_password1'].help_text = '<br/>'.join([
+            "Dein Passwort darf keine Ähnlichkeit zu anderen persönlichen Information aufweisen.",
+            "Dein Passwort muss aus mindestens 8 Zeichen bestehen.",
+            "Dein Passwort darf nicht zu offensichtlich sein.",
+            "Dein Passwort darf nicht nur aus Ziffern bestehen.",
+        ])
+
+
 class PasswordResetForm(auth_forms.PasswordResetForm):
     template_name_label = 'fatama/forms/label.html'
 

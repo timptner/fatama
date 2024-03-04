@@ -102,7 +102,7 @@ class LoginViewTest(TestCase):
         self.assertContains(response, "Anmelden")
 
 
-class LogoutView(TestCase):
+class LogoutViewTest(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create_user(username='john')
         self.path = reverse('accounts:logout')
@@ -127,7 +127,7 @@ class LogoutView(TestCase):
         self.assertIsNone(self.client.session.__dict__['_SessionBase__session_key'])
 
 
-class PasswortResetView(TestCase):
+class PasswordResetViewTest(TestCase):
     def setUp(self) -> None:
         self.path = reverse('accounts:password_reset')
         self.user = User.objects.create_user(
@@ -148,7 +148,38 @@ class PasswortResetView(TestCase):
         self.assertRedirects(response, reverse('accounts:login'))
 
 
-class PasswortResetConfirmView(TestCase):
+class PasswordChangeViewTest(TestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(username='john', password='secret123')
+        self.path = reverse('accounts:edit_password')
+
+    def test_public_viw(self) -> None:
+        response = self.client.get(self.path)
+        path = reverse('accounts:login')
+        self.assertRedirects(response, f'{path}?next={self.path}')
+
+    def test_public_form_view(self) -> None:
+        response = self.client.post(self.path)
+        path = reverse('accounts:login')
+        self.assertRedirects(response, f'{path}?next={self.path}')
+
+    def test_user_view(self) -> None:
+        self.client.force_login(self.user)
+        response = self.client.get(self.path)
+        self.assertContains(response, "Passwort ändern")
+
+    def test_user_form_view(self) -> None:
+        self.client.force_login(self.user)
+        data = {
+            'old_password': 'secret123',
+            'new_password1': '124secret',
+            'new_password2': '124secret',
+        }
+        response = self.client.post(self.path, data=data)
+        self.assertRedirects(response, reverse('accounts:edit_password'))
+
+
+class PasswordResetConfirmViewTest(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create_user(username='john')
         self.kwargs = {

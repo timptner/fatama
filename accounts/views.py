@@ -10,7 +10,8 @@ from django.views.generic import (CreateView, FormView, ListView, TemplateView,
                                   UpdateView)
 
 from accounts.forms import (AuthenticationForm, CouncilForm, InviteForm,
-                            PasswordResetForm, SetPasswordForm, UserForm)
+                            PasswordChangeForm, PasswordResetForm,
+                            SetPasswordForm, UserForm)
 from accounts.models import Council, Invite
 
 
@@ -67,6 +68,13 @@ class LogoutView(auth_views.LogoutView):
             return render(request, 'accounts/logout.html')
         else:
             return redirect('accounts:login')
+
+
+class PasswordChangeView(SuccessMessageMixin, auth_views.PasswordChangeView):
+    form_class = PasswordChangeForm
+    success_message = "Dein Password wurde aktualisiert."
+    success_url = reverse_lazy('accounts:edit_password')
+    template_name = 'accounts/password_form.html'
 
 
 class PasswordResetView(SuccessMessageMixin, auth_views.PasswordResetView):

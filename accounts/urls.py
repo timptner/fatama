@@ -9,6 +9,7 @@ urlpatterns = [
     path('invite/', views.InviteCreateView.as_view(), name='create_invite'),
     path('login/', views.LoginView.as_view(), name='login'),
     path('logout/', views.LogoutView.as_view(), name='logout'),
+    path('password/change/', views.PasswordChangeView.as_view(), name='edit_password'),
     path('password_reset/', views.PasswordResetView.as_view(), name='password_reset'),
     path('reset/<uidb64>/<token>/', views.PasswordResetConfirm.as_view(), name='password_reset_confirm'),
     path('profile/', views.ProfileView.as_view(), name='profile'),
