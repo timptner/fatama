@@ -9,8 +9,10 @@ from django.contrib.auth import forms as auth_forms
 from django.contrib.auth.password_validation import password_validators_help_texts
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.mail import EmailMultiAlternatives
 from django.core.validators import validate_email
 from django.core.mail import send_mail
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils import timezone
 
@@ -67,23 +69,22 @@ class InviteForm(Form):
 
     @staticmethod
     def send_mail(request, invite: Invite) -> None:
-        name = invite.sender.get_full_name()
         scheme = 'https' if request.is_secure() else 'http'
         host = request.get_host()
         path = reverse_lazy('accounts:register', kwargs={'token': invite.token})
         url = f'{scheme}://{host}{path}'
-        send_mail(
-            "Einladung zur FaTaMa2024",
-            f"""Hallo,
 
-du wurdest von {name} eingeladen, dich für die Fachschaftentagung Maschinenbau 2024 zu registrieren.
-
-{url}
-
-Die Einladung ist bis {invite.expired_at} gültig.""",
-            None,
-            [invite.recipient],
-        )
+        context = {
+            'action_url': url,
+            'expired_at': invite.expired_at,  # .strftime('%d.%m.%Y %H:%M:%S (%z)'),
+            'sender': invite.sender.get_full_name(),
+        }
+        subject = "Einladung zur FaTaMa"
+        text_content = render_to_string('accounts/mails/invite.txt', context, request)
+        html_content = render_to_string('accounts/mails/invite.html', context, request)
+        mail = EmailMultiAlternatives(subject, text_content, to=[invite.recipient])
+        mail.attach_alternative(html_content, 'text/html')
+        mail.send()
 
     def save(self, request) -> None:
         emails = self.cleaned_data['emails']
