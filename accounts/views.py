@@ -79,8 +79,10 @@ class PasswordChangeView(SuccessMessageMixin, auth_views.PasswordChangeView):
 
 class PasswordResetView(SuccessMessageMixin, auth_views.PasswordResetView):
     form_class = PasswordResetForm
-    success_message = "Eine E-Mail zum Zurücksetzen des Passworts wurde an <strong>%(email)s</strong> geschickt."
-    success_url = reverse_lazy('accounts:login')
+    success_message = ("Eine E-Mail zum Zurücksetzen des Passworts wurde an <strong>%(email)s</strong> geschickt. Wenn "
+                       "innerhalb der nächsten 5 Minuten keine E-Mail zugestellt wurde existiert womöglich kein Konto "
+                       "mit dieser E-Mail-Adresse.")
+    success_url = reverse_lazy('landing_page')
     template_name = 'accounts/password_reset.html'
 
 

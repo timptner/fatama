@@ -6,6 +6,7 @@ from datetime import timedelta
 from django.conf import settings
 from django.contrib.auth.models import User, Permission
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.flatpages.models import FlatPage, Site
 from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
@@ -13,7 +14,6 @@ from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
 from accounts.models import Invite
-from congresses.models import Congress
 
 
 class CouncilCreateViewTest(TestCase):
@@ -159,7 +159,10 @@ class PasswordChangeViewTest(TestCase):
 
 
 class PasswordResetViewTest(TestCase):
-    def setUp(self) -> None:
+    def setUp(self) -> None:  # TODO FlatPage does not exist
+        site = Site.objects.create(domain='127.0.0.1', name='Example')
+        page = FlatPage.objects.create(url='/', title="Willkommen")
+        page.sites.add(site)
         self.path = reverse('accounts:reset_password')
         self.user = User.objects.create_user(
             username='john',
@@ -175,8 +178,8 @@ class PasswordResetViewTest(TestCase):
         data = {
             'email': self.user.email,
         }
-        response = self.client.post(self.path, data)
-        self.assertRedirects(response, reverse('accounts:login'))
+        response = self.client.post(self.path, data, SERVER_NAME='127.0.0.1')
+        self.assertRedirects(response, reverse('landing_page'))
 
 
 class PasswordResetConfirmViewTest(TestCase):

@@ -1,22 +1,30 @@
 {% extends 'accounts/base_page.html' %}
 
+{% block title %}
+    {{ block.super }} | Anmelden
+{% endblock %}
+
 {% block content %}
-    <p class="title">Anmelden</p>
+    <div class="columns is-centered">
+        <div class="column is-half">
+            <h3 class="title">Anmelden</h3>
 
-    <form method="post">
-        {% csrf_token %}
+            <form method="post">
+                {% csrf_token %}
 
-        {{ form }}
+                {{ form }}
 
-        <div class="field is-grouped">
-            <div class="control">
-                <button class="button is-primary" type="submit">Anmelden</button>
-            </div>
-            <div class="control">
-                <a href="{% url 'accounts:reset_password' %}" class="button is-ghost">
-                    Passwort vergessen?
-                </a>
-            </div>
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button class="button is-primary" type="submit">Anmelden</button>
+                    </div>
+                    <div class="control">
+                        <a class="button is-ghost" href="{% url 'accounts:reset_password' %}">
+                            Passwort vergessen?
+                        </a>
+                    </div>
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 {% endblock %}

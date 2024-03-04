@@ -25,8 +25,21 @@ class AuthenticationForm(auth_forms.AuthenticationForm):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.fields['username'].widget.attrs.update({'class': 'input'})
-        self.fields['password'].widget.attrs.update({'class': 'input'})
+        fields = {
+            'username': "Benutzername",
+            'password': "Passwort",
+        }
+        for field, label in fields.items():
+            self.fields[field].widget.attrs.update({'class': 'input'})
+            self.fields[field].label = label
+
+        self.error_messages.update({
+            "invalid_login": (
+                "Die Kombination aus Benutzername und Passwort ist ungültig. Beachte bitte, dass beide Felder die "
+                "Groß- und Kleinschreibung berücksichtigen."
+            ),
+            "inactive": "Dieses Konto ist inaktiv.",
+        })
 
 
 class CouncilForm(ModelForm):
@@ -122,6 +135,7 @@ class PasswordResetForm(auth_forms.PasswordResetForm):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.fields['email'].widget.attrs.update({'class': 'input'})
+        self.fields['email'].label = "E-Mail-Adresse"
 
     def send_mail(self, subject_template_name, email_template_name, context,
                   from_email, to_email, html_email_template_name=None):
