@@ -163,7 +163,8 @@ class UserForm(ModelForm):
             'email': forms.EmailInput(attrs={'class': 'input'}),
         }
         help_texts = {
-            'username': "150 Zeichen oder weniger. Buchstaben und Ziffern sind zulässig."
+            'username': "150 Zeichen oder weniger. Buchstaben und Ziffern sind zulässig.",
+            'email': "Deine persönliche E-Mail-Adresse. Bitte nicht die E-Mail-Adresse der Fachschaft angeben.",
         }
 
     def __init__(self, *args, **kwargs):
