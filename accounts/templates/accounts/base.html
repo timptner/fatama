@@ -1,11 +1,13 @@
 {% extends 'fatama/base.html' %}
 
+{% load static %}
+
 {% block content %}
     <section class="section">
         <div class="container is-max-desktop">
             <div class="columns">
                 <div class="column is-narrow">
-                    <aside class="menu">
+                    <aside class="menu" id="accountsMenu">
                         <p class="menu-label">Konto</p>
                         <ul class="menu-list">
                             <li><a href="{% url 'accounts:profile' %}">Profil</a></li>
@@ -36,4 +38,9 @@
             </div>
         </div>
     </section>
+{% endblock %}
+
+{% block scripts %}
+    {{ block.super }}
+    <script src="{% static 'accounts/js/active_menu.js' %}"></script>
 {% endblock %}
