@@ -76,7 +76,7 @@ class InviteForm(Form):
 
         context = {
             'action_url': url,
-            'expired_at': invite.expired_at,  # .strftime('%d.%m.%Y %H:%M:%S (%z)'),
+            'expired_at': invite.expired_at,
             'sender': invite.sender.get_full_name(),
         }
         subject = "Einladung zur FaTaMa"
