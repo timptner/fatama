@@ -1,0 +1,31 @@
+{% extends 'accounts/base.html' %}
+
+{% block title %}
+    {{ block.super }} | Profil bearbeiten
+{% endblock %}
+
+{% block subcontent %}
+    <nav class="breadcrumb" aria-label="breadcrumbs">
+        <ul>
+            <li><a href="{% url 'accounts:profile' %}">Profil</a></li>
+            <li class="is-active"><a aria-current="page">Profil bearbeiten</a></li>
+        </ul>
+    </nav>
+
+    <h3 class="title">Profil bearbeiten</h3>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form }}
+
+        <div class="field is-grouped">
+            <div class="control">
+                <button class="button is-primary" type="submit">Aktualisieren</button>
+            </div>
+            <div class="control">
+                <a class="button is-light" href="{% url 'accounts:profile' %}">Abbrechen</a>
+            </div>
+        </div>
+    </form>
+{% endblock %}

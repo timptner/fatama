@@ -6,7 +6,8 @@ from django.contrib.auth import logout, views as auth_views
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse_lazy
-from django.views.generic import CreateView, FormView, ListView, TemplateView
+from django.views.generic import (CreateView, FormView, ListView, TemplateView,
+                                  UpdateView)
 
 from accounts.forms import (AuthenticationForm, CouncilForm, InviteForm,
                             PasswordResetForm, SetPasswordForm, UserForm)
@@ -115,3 +116,13 @@ def registration(request, token):
         'password_form': password_form,
         'user_form': user_form,
     })
+
+
+class UserUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    form_class = UserForm
+    success_message = "Deine Informationen wurden aktualisiert."
+    success_url = reverse_lazy('accounts:profile')
+    template_name = 'accounts/user_form.html'
+
+    def get_object(self, queryset=None):
+        return self.request.user

@@ -228,3 +228,35 @@ class RegistrationViewTest(TestCase):
         path = reverse('accounts:register', kwargs={'token': token})
         response = self.client.post(path, data=self.data)
         self.assertEqual(response.status_code, 403)
+
+
+class UserUpdateViewTest(TestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create_user('john')
+        self.data = {
+            'username': 'jane',
+            'first_name': 'Jane',
+            'last_name': 'Doe',
+            'email': 'jane.doe@example.org',
+        }
+        self.path = reverse('accounts:edit_profile')
+
+    def test_public_view(self) -> None:
+        response = self.client.get(self.path)
+        path = reverse('accounts:login')
+        self.assertRedirects(response, f'{path}?next={self.path}')
+
+    def test_public_form_view(self) -> None:
+        response = self.client.post(self.path, data=self.data)
+        path = reverse('accounts:login')
+        self.assertRedirects(response, f'{path}?next={self.path}')
+
+    def test_user_view(self) -> None:
+        self.client.force_login(self.user)
+        response = self.client.get(self.path)
+        self.assertContains(response, "Profil bearbeiten")
+
+    def test_user_form_view(self) -> None:
+        self.client.force_login(self.user)
+        response = self.client.post(self.path, data=self.data)
+        self.assertRedirects(response, reverse('accounts:profile'))
