@@ -127,27 +127,6 @@ class LogoutViewTest(TestCase):
         self.assertIsNone(self.client.session.__dict__['_SessionBase__session_key'])
 
 
-class PasswordResetViewTest(TestCase):
-    def setUp(self) -> None:
-        self.path = reverse('accounts:password_reset')
-        self.user = User.objects.create_user(
-            username='john',
-            email='john.doe@example.org',
-            first_name='John',
-        )
-
-    def test_public_view(self) -> None:
-        response = self.client.get(self.path)
-        self.assertContains(response, "Passwort zurücksetzen")
-
-    def test_public_form_view(self) -> None:
-        data = {
-            'email': self.user.email,
-        }
-        response = self.client.post(self.path, data)
-        self.assertRedirects(response, reverse('accounts:login'))
-
-
 class PasswordChangeViewTest(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create_user(username='john', password='secret123')
@@ -177,6 +156,27 @@ class PasswordChangeViewTest(TestCase):
         }
         response = self.client.post(self.path, data=data)
         self.assertRedirects(response, reverse('accounts:edit_password'))
+
+
+class PasswordResetViewTest(TestCase):
+    def setUp(self) -> None:
+        self.path = reverse('accounts:reset_password')
+        self.user = User.objects.create_user(
+            username='john',
+            email='john.doe@example.org',
+            first_name='John',
+        )
+
+    def test_public_view(self) -> None:
+        response = self.client.get(self.path)
+        self.assertContains(response, "Passwort zurücksetzen")
+
+    def test_public_form_view(self) -> None:
+        data = {
+            'email': self.user.email,
+        }
+        response = self.client.post(self.path, data)
+        self.assertRedirects(response, reverse('accounts:login'))
 
 
 class PasswordResetConfirmViewTest(TestCase):
