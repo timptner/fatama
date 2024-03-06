@@ -1,7 +1,5 @@
 {% extends 'fatama/mails/base.txt' %}
-
 {% block preheader %}Du wurdest von {{ sender }} eingeladen, ein Konto für die FaTaMa {{ the_congress.year }} zu erstellen.{% endblock %}
-
 {% block content %}# Hallo!
 
 Du wurdest von {{ sender }} eingeladen, ein Konto für die FaTaMa {{ the_congress.year }} zu erstellen.
@@ -19,4 +17,5 @@ Beste Grüße,
 
 Sollte die Schaltfläche nicht funktionieren, kannst du die nachfolgende Webadresse kopieren und in deinem Browser öffnen.
 
-{{action_url}}{%endblock %}
+{{action_url}}
+{%endblock %}
