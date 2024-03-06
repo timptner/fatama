@@ -9,4 +9,8 @@ media/
 # Python
 *.pyc
 __pycache__/
-venv/
+.venv/
+
+# Zed
+.zed/
+pyrightconfig.json
