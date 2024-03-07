@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 from accounts.models import Council
 from congresses.forms import AttendanceForm, ParticipantForm, PortraitForm, SeatForm
@@ -57,9 +58,13 @@ class PortraitFormTest(TestCase):
         data = {
             'diet': Portrait.VEGAN,
             'intolerances': '',
-            'railcard': Portrait.GERMANY_TICKET,
+            'size': Portrait.MEDIUM,
+            'railcard': Portrait.STUDENT_CARD,
         }
-        form = PortraitForm(data=data, participant=self.participant)
+        files = {
+            'certificate': SimpleUploadedFile('certificate.pdf', b'test', 'application/pdf'),
+        }
+        form = PortraitForm(data=data, files=files, participant=self.participant)
         self.assertTrue(form.is_valid())
 
 

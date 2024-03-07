@@ -1,12 +1,30 @@
 {% extends 'accounts/base.html' %}
 
 {% block subcontent %}
+    <div class="buttons is-pulled-right">
+        <a class="button is-primary" href="{% url 'accounts:edit_profile' %}">Profil bearbeiten</a>
+    </div>
+
     <h3 class="title">Profil</h3>
 
-    <p>{{ user.username }}</p>
-    <p>{{ user.get_full_name }}</p>
-
-    <p>{{ user.profile.university }}</p>
-
-    <p>{{ user.date_joined }}</p>
+    <table class="table is-fullwidth">
+        <tbody>
+        <tr>
+            <th>Benutzername</th>
+            <td>{{ user.username }}</td>
+        </tr>
+        <tr>
+            <th>Vor- und Nachname</th>
+            <td>{{ user.get_full_name }}</td>
+        </tr>
+        <tr>
+            <th>E-Mail-Adresse</th>
+            <td>{{ user.email }}</td>
+        </tr>
+        <tr>
+            <th>Beitrittsdatum</th>
+            <td>{{ user.date_joined }}</td>
+        </tr>
+        </tbody>
+    </table>
 {% endblock %}

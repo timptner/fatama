@@ -19,30 +19,43 @@
                         <div class="block">
                             Dein Konto ist noch keinem Gremium zugewiesen. Bitte lege ein neues Gremium an, da du dich
                             sonst zu keiner Tagung anmelden kannst. Wenn dein Gremium bereits im Verzeichnis aufgeführt
-                            sein sollte, melde dich bitte bei der austragenden Fachschaft, um das Gremium auf dich
+                            sein sollte, melde dich bei der austragenden Fachschaft, um das Gremium auf dich
                             umschreiben zu lassen.
                         </div>
                         <div class="buttons">
-                            <a class="button is-warning" href="{% url 'accounts:create_council' %}">Gremium erstellen</a>
+                            <a class="button is-warning" href="{% url 'accounts:create_council' %}">Gremium
+                                erstellen</a>
                         </div>
                     </div>
                 </article>
             {% endif %}
 
             {% regroup council_list by university as university_list %}
-            {% for university in university_list %}
+            {% for university, local_council_list in university_list %}
                 <div class="box">
-                    <p class="title is-5">{{ university.grouper }}</p>
+                    <p class="title is-5">
+                        <span class="icon-text">
+                            <span class="icon">
+                                <i class="fa-solid fa-university"></i>
+                            </span>
+                            <span>{{ university }}</span>
+                        </span>
+                    </p>
 
                     <ul>
-                    {% for council in university.list %}
-                        <li>
-                            {{ council.name }}
-                            {% if council == user.council %}
-                                <span class="tag is-primary">Dein Gremium</span>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
+                        {% for council in local_council_list %}
+                            <li>
+                                <span class="icon-text">
+                                    <span class="icon">
+                                        <i class="fa-solid fa-people-group fa-fw"></i>
+                                    </span>
+                                    <span>{{ council.name }}</span>
+                                </span>
+                                {% if council == user.council %}
+                                    <span class="tag is-primary">Dein Gremium</span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
                     </ul>
                 </div>
             {% empty %}

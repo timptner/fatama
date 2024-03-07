@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.test import TestCase
 
-from accounts.forms import CouncilForm, ProfileForm, SetPasswordForm, UserForm
+from accounts.forms import CouncilForm, InviteForm, ProfileForm, SetPasswordForm, UserForm
 
 
 class CouncilFormTest(TestCase):
@@ -15,6 +15,22 @@ class CouncilFormTest(TestCase):
         }
         form = CouncilForm(data=data, user=self.user)
         self.assertTrue(form.is_valid())
+
+
+class InviteFormTest(TestCase):
+    def test_form_valid(self) -> None:
+        data = {
+            'emails': 'john.doe@example.org, jane.doe@example.org',
+        }
+        form = InviteForm(data=data, user=None)
+        self.assertTrue(form.is_valid())
+
+    def test_form_invalid(self) -> None:
+        data = {
+            'emails': 'john.doe, jane.doe@example.org',
+        }
+        form = InviteForm(data=data, user=None)
+        self.assertFalse(form.is_valid())
 
 
 class ProfileFormTest(TestCase):
