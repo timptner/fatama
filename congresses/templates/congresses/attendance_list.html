@@ -9,102 +9,115 @@
         <div class="container">
             <h3 class="title">Liste aller Besuche</h3>
 
-            <div class="block">
-                <div class="dropdown is-hoverable">
-                    <div class="dropdown-trigger">
-                        <button class="button" aria-haspopup="true" aria-controls="attendance-menu">
-                            <span>Zum Gremium springen</span>
-                            <span class="icon is-small">
-                                <i class="fa-solid fa-angle-down" aria-hidden="true"></i>
-                            </span>
-                        </button>
+            <div class="is-hidden-desktop">
+                <article class="message is-warning">
+                    <div class="message-header">
+                        <p>Mobile Ansicht</p>
                     </div>
-                    <div class="dropdown-menu" id="attendance-menu" role="menu">
-                        <div class="dropdown-content">
-                            {% for attendance in attendance_list %}
-                                <a href="#attendance-{{ attendance.pk }}" class="dropdown-item">
-                                    {% with attendance.council as council %}
-                                        {{ council.university }} | {{ council.name}}
-                                    {% endwith %}
-                                </a>
-                            {% endfor %}
+                    <div class="message-body">
+                        Diese Seite kann nur auf Geräten mit einem größeren Display angezeigt werden.
+                    </div>
+                </article>
+            </div>
+
+            <div class="is-hidden-touch">
+                <div class="block">
+                    <div class="dropdown is-hoverable">
+                        <div class="dropdown-trigger">
+                            <button class="button" aria-haspopup="true" aria-controls="attendance-menu">
+                                <span>Zum Gremium springen</span>
+                                <span class="icon is-small">
+                                    <i class="fa-solid fa-angle-down" aria-hidden="true"></i>
+                                </span>
+                            </button>
+                        </div>
+                        <div class="dropdown-menu" id="attendance-menu" role="menu">
+                            <div class="dropdown-content">
+                                {% for attendance in attendance_list %}
+                                    <a href="#attendance-{{ attendance.pk }}" class="dropdown-item">
+                                        {% with attendance.council as council %}
+                                            {{ council.university }} | {{ council.name}}
+                                        {% endwith %}
+                                    </a>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {% regroup attendance_list by council.university as university_list %}
-            {% for university, local_attendances in university_list %}
-                {% for attendance in local_attendances %}
-                    <span id="attendance-{{ attendance.pk }}"></span>
-                {% endfor %}
+                {% regroup attendance_list by council.university as university_list %}
+                {% for university, local_attendances in university_list %}
+                    {% for attendance in local_attendances %}
+                        <span id="attendance-{{ attendance.pk }}"></span>
+                    {% endfor %}
 
-                <h4 class="title is-4 mb-0">{{ university }}</h4>
+                    <h4 class="title is-4 mb-0">{{ university }}</h4>
 
-                {% for attendance in local_attendances %}
-                    <div class="is-pulled-right is-flex is-align-items-baseline">
-                        <span class="tags has-addons mb-0 mr-3">
-                            <span class="tag mb-0">Reiseleiter</span>
-                            <span class="tag is-primary mb-0">
-                                {{ attendance.council.owner.get_full_name }}
+                    {% for attendance in local_attendances %}
+                        <div class="is-pulled-right is-flex is-align-items-baseline">
+                            <span class="tags has-addons mb-0 mr-3">
+                                <span class="tag mb-0">Reiseleiter</span>
+                                <span class="tag is-primary mb-0">
+                                    {{ attendance.council.owner.get_full_name }}
+                                </span>
                             </span>
-                        </span>
-                        <span class="tags has-addons">
-                            <span class="tag mb-0">Plätze</span>
-                            <span class="tag {% if attendance.remaining_seats > 0%}is-success{% else %}is-danger{% endif %} mb-0">
-                                {{ attendance.participant_set.count }}/{{ attendance.seats }}
+                            <span class="tags has-addons">
+                                <span class="tag mb-0">Plätze</span>
+                                <span class="tag {% if attendance.remaining_seats > 0%}is-success{% else %}is-danger{% endif %} mb-0">
+                                    {{ attendance.participant_set.count }}/{{ attendance.seats }}
+                                </span>
                             </span>
-                        </span>
-                    </div>
+                        </div>
 
-                    <h6 class="subtitle is-6">
-                        {{ attendance.council.name }}
-                    </h6>
+                        <h6 class="subtitle is-6">
+                            {{ attendance.council.name }}
+                        </h6>
 
-                    <table class="table is-fullwidth is-striped">
-                        <thead>
-                            <tr>
-                                <th>&num;</th>
-                                <th>Name</th>
-                                <th>Ernährung</th>
-                                <th>Unverträglichkeiten</th>
-                                <th>Deutschlandticket</th>
-                                <th>Konfektion</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for participant in attendance.participant_set.all %}
+                        <table class="table is-fullwidth is-striped">
+                            <thead>
                                 <tr>
-                                    <th>{{ forloop.counter }}</th>
-                                    <td>{{ participant.full_name }}</td>
-                                    {% with participant.portrait as portrait %}
-                                        {% if portrait %}
-                                            <td>{{ portrait.get_diet_display }}</td>
-                                            {% if portrait.intolerances %}
-                                                <td>{{ portrait.intolerances }}</td>
+                                    <th>&num;</th>
+                                    <th>Name</th>
+                                    <th>Ernährung</th>
+                                    <th>Unverträglichkeiten</th>
+                                    <th>Deutschlandticket</th>
+                                    <th>Konfektion</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for participant in attendance.participant_set.all %}
+                                    <tr>
+                                        <th>{{ forloop.counter }}</th>
+                                        <td>{{ participant.full_name }}</td>
+                                        {% with participant.portrait as portrait %}
+                                            {% if portrait %}
+                                                <td>{{ portrait.get_diet_display }}</td>
+                                                {% if portrait.intolerances %}
+                                                    <td>{{ portrait.intolerances }}</td>
+                                                {% else %}
+                                                    <td class="is-italic">Keine</td>
+                                                {% endif %}
+                                                <td>{{ portrait.get_railcard_display }}</td>
+                                                <td>{{ portrait.get_size_display }}</td>
                                             {% else %}
-                                                <td class="is-italic">Keine</td>
+                                                <td colspan="4" class="has-text-centered is-italic">
+                                                    Es wurde noch kein Profil angelegt.
+                                                </td>
                                             {% endif %}
-                                            <td>{{ portrait.get_railcard_display }}</td>
-                                            <td>{{ portrait.get_size_display }}</td>
-                                        {% else %}
-                                            <td colspan="4" class="has-text-centered is-italic">
-                                                Es wurde noch kein Profil angelegt.
-                                            </td>
-                                        {% endif %}
-                                    {% endwith %}
-                                </tr>
-                            {% empty %}
-                                <tr>
-                                    <td colspan="6" class="has-text-centered is-italic">
-                                        Es wurden noch keine Teilnehmer angemeldet.
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                                        {% endwith %}
+                                    </tr>
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="6" class="has-text-centered is-italic">
+                                            Es wurden noch keine Teilnehmer angemeldet.
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
+            </div>
         </div>
     </section>
 {% endblock %}
