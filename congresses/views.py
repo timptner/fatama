@@ -28,7 +28,7 @@ class AttendanceCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return reverse_lazy('congresses:congress_detail', kwargs={'year': self.kwargs['year']})
 
 
-class AttendanceDetailsView(LoginRequiredMixin, UserPassesTestMixin, DetailView):
+class AttendanceDetailsView(UserPassesTestMixin, DetailView):
     model = Attendance
 
     def get_context_data(self, **kwargs):
@@ -47,6 +47,23 @@ class AttendanceDetailsView(LoginRequiredMixin, UserPassesTestMixin, DetailView)
             return False
 
 
+class AttendanceListView(UserPassesTestMixin, ListView):
+    model = Attendance
+
+    def get_queryset(self):
+        congress = Congress.objects.order_by('-year').first()
+        return Attendance.objects.filter(congress=congress).order_by('council')
+
+    def test_func(self) -> bool:
+        user = self.request.user
+        if user.is_superuser:
+            return True
+        elif user.is_staff:
+            return True
+        else:
+            return False
+
+
 class CongressDetailView(LoginRequiredMixin, DetailView):
     model = Congress
 
@@ -59,7 +76,7 @@ class CongressDetailView(LoginRequiredMixin, DetailView):
         return context
 
 
-class ParticipantCreateView(LoginRequiredMixin, SuccessMessageMixin, UserPassesTestMixin, CreateView):
+class ParticipantCreateView(UserPassesTestMixin, SuccessMessageMixin, CreateView):
     form_class = ParticipantForm
     success_message = "Teilnehmer wurde hinzugefügt."
     template_name = 'congresses/participant_form.html'
@@ -90,7 +107,7 @@ class ParticipantCreateView(LoginRequiredMixin, SuccessMessageMixin, UserPassesT
             return False
 
 
-class PortraitCreateView(LoginRequiredMixin, SuccessMessageMixin, UserPassesTestMixin, CreateView):
+class PortraitCreateView(UserPassesTestMixin, SuccessMessageMixin, CreateView):
     form_class = PortraitForm
     success_message = "Portrait wurde erstellt."
     template_name = 'congresses/portrait_form.html'
@@ -123,7 +140,7 @@ class PortraitCreateView(LoginRequiredMixin, SuccessMessageMixin, UserPassesTest
             return False
 
 
-class SeatFormView(LoginRequiredMixin, SuccessMessageMixin, UserPassesTestMixin, FormView):
+class SeatFormView(UserPassesTestMixin, SuccessMessageMixin, FormView):
     form_class = SeatForm
     template_name = 'congresses/update_seats.html'
     success_message = "Attendances were successfully updated."

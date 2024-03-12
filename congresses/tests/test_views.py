@@ -61,6 +61,38 @@ class AttendanceDetailViewTest(TestCase):
         self.assertContains(response, 'Details zur Teilnahme')
 
 
+class AttendanceListView(TestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(username='john')
+        staff = User.objects.create_user(username='jane')
+        staff.is_staff = True
+        staff.save()
+        self.staff = staff
+        council = Council.objects.create(
+            owner=self.user,
+            university="Otto-von-Guericke-Universität Magdeburg",
+            name="Fachschaftsrat Maschinenbau",
+        )
+        congress = Congress.objects.create(title="Tagung", location="Magdeburg", year=2024)
+        self.attendance = Attendance.objects.create(congress=congress, council=council)
+        self.path = reverse('congresses:attendance_list')
+
+    def test_public_view(self) -> None:
+        response = self.client.get(self.path)
+        path = reverse('accounts:login')
+        self.assertRedirects(response, f'{path}?next={self.path}')
+
+    def test_user_view(self) -> None:
+        self.client.force_login(self.user)
+        response = self.client.get(self.path)
+        self.assertEqual(response.status_code, 403)
+
+    def test_staff_view(self) -> None:
+        self.client.force_login(self.staff)
+        response = self.client.get(self.path)
+        self.assertContains(response, 'Liste aller Besuche')
+
+
 class CongressDetailViewTest(TestCase):
     def setUp(self) -> None:
         self.congress = Congress.objects.create(title="FaTaMa 2024", location="Magdeburg", year=2024)
