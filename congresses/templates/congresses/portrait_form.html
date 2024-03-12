@@ -3,45 +3,45 @@
 {% load static %}
 
 {% block title %}
-    {{ block.super }} | Portrait erstellen
+{{ block.super }} | Portrait erstellen
 {% endblock %}
 
 {% block content %}
-    <section class="section">
-        <div class="container is-max-desktop">
-            <h3 class="title">Portrait erstellen</h3>
-            <h5 class="subtitle">{{ participant.full_name }}</h5>
+<section class="section">
+    <div class="container is-max-desktop">
+        <h3 class="title">Portrait erstellen</h3>
+        <h5 class="subtitle">{{ participant.full_name }}</h5>
 
-            <article class="message is-info">
-                <div class="message-body">
-                    Das <em>Bundesministerium für Bildung und Forschung</em>
-                    verlangt für die Förderung der Tagung die
-                    Immatrikulationsbescheinigung von allen Teilnehmer.
+        <article class="message is-info">
+            <div class="message-body">
+                Das <em>Bundesministerium für Bildung und Forschung</em>
+                verlangt für die Förderung der Tagung die
+                Immatrikulationsbescheinigung von allen Teilnehmern.
+            </div>
+        </article>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {{ form }}
+
+            <div class="field is-grouped">
+                <div class="control">
+                    <button type="submit" class="button is-success">Erstellen</button>
                 </div>
-            </article>
-
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-
-                {{ form }}
-
-                <div class="field is-grouped">
-                    <div class="control">
-                        <button type="submit" class="button is-success">Erstellen</button>
-                    </div>
-                    <div class="control">
-                        <a href="{% url 'congresses:attendance_detail' attendance.pk %}"
-                           class="button is-danger">
-                            Abbrechen
-                        </a>
-                    </div>
+                <div class="control">
+                    <a href="{% url 'congresses:attendance_detail' attendance.pk %}"
+                       class="button is-danger">
+                        Abbrechen
+                    </a>
                 </div>
-            </form>
-        </div>
-    </section>
+            </div>
+        </form>
+    </div>
+</section>
 {% endblock %}
 
 {% block scripts %}
-    {{ block.super }}
-    <script src="{% static 'congresses/file_input.js' %}"></script>
+{{ block.super }}
+<script src="{% static 'congresses/file_input.js' %}"></script>
 {% endblock %}
