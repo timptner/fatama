@@ -6,7 +6,7 @@
 
 {% block content %}
     <section class="section">
-        <div class="container">
+        <div class="container is-max-desktop">
             <h3 class="title">{{ congress.title }}</h3>
             <h5 class="subtitle">{{ congress.location }}, {{ congress.year }}</h5>
 
@@ -58,41 +58,36 @@
             {% endif %}
 
             <h4 class="title is-4">Teilnehmende Gremien</h4>
-            <div class="columns is-multiline">
-                {% regroup congress.attendance_set.all by council.university as university_list %}
-                {% for university, attendance_list in university_list %}
-                    <div class="column is-one-third">
-                        <div class="box">
-                            <p class="has-text-weight-bold">
-                                <span class="icon-text">
-                                    <span class="icon">
-                                        <i class="fa-solid fa-university"></i>
-                                    </span>
-                                    <span>{{ university }}</span>
+
+            {% regroup congress.attendance_set.all|dictsort:"council.university" by council.university as university_list %}
+            {% for university, attendance_list in university_list %}
+                <div class="block">
+                    <p class="has-text-weight-bold">
+                        <span class="icon-text">
+                            <span class="icon">
+                                <i class="fa-solid fa-university"></i>
+                            </span>
+                            <span>{{ university }}</span>
+                        </span>
+                    </p>
+                    {% for attendance in attendance_list %}
+                        <p>
+                            <span class="icon-text">
+                                <span class="icon">
+                                    <i class="fa-solid fa-people-group fa-fw"></i>
                                 </span>
-                            </p>
-                            {% for attendance in attendance_list %}
-                                <p>
-                                    <span class="icon-text">
-                                        <span class="icon">
-                                            <i class="fa-solid fa-people-group fa-fw"></i>
-                                        </span>
-                                        <span>{{ attendance.council.name }}</span>
-                                    </span>
-                                </p>
-                            {% endfor %}
-                        </div>
+                                <span>{{ attendance.council.name }}</span>
+                            </span>
+                        </p>
+                    {% endfor %}
+                </div>
+            {% empty %}
+                <article class="message is-info">
+                    <div class="message-body">
+                        Es haben sich noch keine Gremien für diese Tagung angemeldet.
                     </div>
-                {% empty %}
-                    <div class="column is-full">
-                        <article class="message is-info">
-                            <div class="message-body">
-                                Es haben sich noch keine Gremien für diese Tagung angemeldet.
-                            </div>
-                        </article>
-                    </div>
-                {% endfor %}
-            </div>
+                </article>
+            {% endfor %}
         </div>
     </section>
 {% endblock %}
