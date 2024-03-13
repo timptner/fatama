@@ -1,6 +1,9 @@
+import markdown
+
 from django import forms
 from django.core.exceptions import ValidationError
-from django.core.mail import send_mail, send_mass_mail
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 
 from congresses.models import Attendance, Participant, Portrait
@@ -34,9 +37,23 @@ class AttendanceAdminForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+    def clean_seats(self) -> int:
+        data = self.cleaned_data['seats']
+        attendance: Attendance = self.instance
+        if attendance.pk is not None:
+            used = attendance.participant_set.count()
+            if data < used:
+                raise ValidationError(
+                    "Die Anzahl der Plätze kann nicht kleiner als die Anzahl "
+                    "bereits angemeldeter Teilnehmer (%(amount)s) sein.",
+                    params={'amount': used},
+                    code="too_less",
+                )
+        return data
+
     def send_mail(self, request) -> None:
-        subject, message, sender, recipients = get_seat_update_mail(self.instance, request)
-        send_mail(subject, message, sender, recipients)
+        if 'seats' in self.changed_data:
+            send_seat_update_mail(self.instance, request)
 
 
 class ParticipantForm(ModelForm):
@@ -116,26 +133,32 @@ class PortraitForm(ModelForm):
         return portrait
 
 
-def get_seat_update_mail(attendance: Attendance, request):
+def send_seat_update_mail(attendance: Attendance, request):
     scheme = 'https' if request.is_secure() else 'http'
     host = request.get_host()
     path = reverse_lazy('congresses:attendance_detail', kwargs={'pk': attendance.pk})
     user = attendance.council.owner
+    url = f"{scheme}://{host}{path}"
+
+    context = {
+        'recipient': user.first_name,
+        'attendance': attendance,
+        'action_url': url,
+        'seats': {
+            'total': attendance.seats,
+            'free': attendance.remaining_seats(),
+        },
+    }
+
     subject = "Teilnehmerplätze aktualisiert"
-    message = f"""Hallo {user.first_name},
 
-die Teilnehmerplätze für die Anmeldung deines Gremiums {attendance.council} zur Tagung {attendance.congress} wurden aktualisiert.
+    text_content = render_to_string("congresses/mails/seat_update.md", context, request)
+    html_content = markdown.markdown(text_content)
 
-{scheme}://{host}{path}"""
-    sender = None
-    recipients = [user.email]
+    mail = EmailMultiAlternatives(subject, text_content, None, [user.email])
+    mail.attach_alternative(html_content, "text/html")
 
-    return (
-        subject,
-        message,
-        sender,
-        recipients,
-    )
+    mail.send()
 
 
 class SeatForm(Form):
@@ -148,10 +171,26 @@ class SeatForm(Form):
         self.ids = ids
         super().__init__(*args, **kwargs)
 
-    def save(self, request) -> int:
+    def clean_seats(self) -> int:
+        data = self.cleaned_data['seats']
+        queryset = Attendance.objects.filter(pk__in=self.ids)
+        for attendance in queryset:
+            used = attendance.participant_set.count()
+            if data < used:
+                error = ValidationError(
+                    "%(attendance)s hat bereits %(amount)s Platz belegt." if used == 1 else
+                    "%(attendance)s hat bereits %(amount)s Plätze belegt.",
+                    params={'attendance': attendance, 'amount': used},
+                    code="too_less",
+                )
+                self.add_error('seats', error)
+        return data
+
+    def save(self, request) -> None:
         seats = self.cleaned_data.get('seats')
         queryset = Attendance.objects.filter(pk__in=self.ids)
-        updated = queryset.update(seats=seats)
-        mails = [get_seat_update_mail(attendance, request) for attendance in queryset]
-        send_mass_mail(mails)
-        return updated
+        for attendance in queryset:
+            if attendance.seats != seats:
+                attendance.seats = seats
+                attendance.save()
+                send_seat_update_mail(attendance, request)

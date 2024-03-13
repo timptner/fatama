@@ -20,6 +20,9 @@ class Council(models.Model):
     def __str__(self) -> str:
         return f'{self.name} ({self.university})'
 
+    def get_years(self) -> list[int]:
+        return self.attendance_set.values_list('congress__year', flat=True)
+
 
 class Invite(models.Model):
     token = models.CharField('Token', unique=True, max_length=20)
@@ -38,11 +41,13 @@ class Invite(models.Model):
 
     def is_expired(self) -> bool:
         return self.expired_at < timezone.now()
+
     is_expired.boolean = True
     is_expired.short_description = "Expired"
 
     def is_active(self) -> bool:
         return not self.is_expired()
+
     is_active.boolean = True
     is_active.short_description = "Active"
 

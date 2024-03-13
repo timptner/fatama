@@ -1,3 +1,4 @@
+import markdown
 import re
 import secrets
 
@@ -11,7 +12,6 @@ from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.mail import EmailMultiAlternatives
 from django.core.validators import validate_email
-from django.core.mail import send_mail
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -101,11 +101,15 @@ class InviteForm(Form):
             "expired_at": invite.expired_at,
             "sender": invite.sender.get_full_name(),
         }
+
         subject = "Einladung zur FaTaMa"
-        text_content = render_to_string("accounts/mails/invite.txt", context, request)
-        html_content = render_to_string("accounts/mails/invite.html", context, request)
-        mail = EmailMultiAlternatives(subject, text_content, to=[invite.recipient])
+
+        text_content = render_to_string("accounts/mails/invite.md", context, request)
+        html_content = markdown.markdown(text_content)
+
+        mail = EmailMultiAlternatives(subject, text_content, None, [invite.recipient])
         mail.attach_alternative(html_content, "text/html")
+
         mail.send()
 
     def save(self, request) -> None:
@@ -166,11 +170,9 @@ class PasswordResetForm(auth_forms.PasswordResetForm):
 
         context = {"action_url": url, "user": user}
         text_content = render_to_string(
-            "accounts/mails/password_reset.txt", context, request
+            "accounts/mails/password_reset.md", context, request
         )
-        html_content = render_to_string(
-            "accounts/mails/password_reset.html", context, request
-        )
+        html_content = markdown.markdown(text_content)
 
         mail = EmailMultiAlternatives(subject, text_content, None, [user.email])
         mail.attach_alternative(html_content, "text/html")

@@ -1,55 +1,58 @@
 {% extends 'fatama/base.html' %}
 {% load static %}
 {% block content %}
-    <section class="section">
-        <div class="container is-max-desktop">
-            <div class="columns">
-                <div class="column is-narrow">
-                    <aside class="menu" id="accountsMenu">
-                        <p class="menu-label">Konto</p>
-                        <ul class="menu-list">
-                            <li>
-                                <a href="{% url 'accounts:profile' %}">Profil</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'accounts:edit_password' %}">Passwort</a>
-                            </li>
-                            <li>
-                                <a href="{% url 'accounts:logout' %}">Abmelden</a>
-                            </li>
-                        </ul>
-                        {% if user.is_staff %}
-                            <p class="menu-label">Verwaltung</p>
-                            <ul class="menu-list">
-                                <li>
-                                    {% if perms.accounts.can_invite %}
-                                        <a href="{% url 'accounts:create_invite' %}">Einladen</a>
-                                    {% else %}
-                                        <a>
+<section class="section">
+    <div class="container is-max-desktop">
+        <div class="columns">
+            <div class="column is-narrow">
+                <aside class="menu" id="accountsMenu">
+                    <p class="menu-label">Konto</p>
+                    <ul class="menu-list">
+                        <li>
+                            <a href="{% url 'accounts:profile' %}">Profil</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'accounts:edit_password' %}">Passwort</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'accounts:logout' %}">Abmelden</a>
+                        </li>
+                    </ul>
+                    {% if user.is_staff %}
+                    <p class="menu-label">Verwaltung</p>
+                    <ul class="menu-list">
+                        <li>
+                            {% if perms.accounts.can_invite %}
+                            <a href="{% url 'accounts:create_invite' %}">Einladen</a>
+                            {% else %}
+                            <a>
                                             <span class="icon-text">
                                                 <span>Einladen</span>
                                                 <span class="icon">
                                                     <i class="fa-solid fa-lock"></i>
                                                 </span>
                                             </span>
-                                        </a>
-                                    {% endif %}
-                                </li>
-                                <li>
-                                    <a href="{% url 'admin:index' %}">Administration</a>
-                                </li>
-                            </ul>
-                        {% endif %}
-                    </aside>
-                </div>
-                <div class="column">
-                    {% block subcontent %}{% endblock %}
-                </div>
+                            </a>
+                            {% endif %}
+                        </li>
+                        <li>
+                            <a href="{% url 'congresses:attendance_list' %}">Teilnehmer</a>
+                        </li>
+                        <li>
+                            <a href="{% url 'admin:index' %}">Administration</a>
+                        </li>
+                    </ul>
+                    {% endif %}
+                </aside>
+            </div>
+            <div class="column">
+                {% block subcontent %}{% endblock %}
             </div>
         </div>
-    </section>
+    </div>
+</section>
 {% endblock %}
 {% block scripts %}
-    {{ block.super }}
-    <script src="{% static 'accounts/js/active_menu.js' %}"></script>
+{{ block.super }}
+<script src="{% static 'accounts/js/active_menu.js' %}"></script>
 {% endblock %}

@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
 from django.contrib.auth import logout, views as auth_views
 from django.core.exceptions import PermissionDenied
 from django.http import request
@@ -41,6 +41,30 @@ class CouncilCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
 class CouncilListView(LoginRequiredMixin, ListView):
     model = Council
+
+
+class CouncilUpdateView(UserPassesTestMixin, SuccessMessageMixin, UpdateView):
+    form_class = CouncilForm
+    success_message = "Gremium wurde aktualisiert."
+    success_url = reverse_lazy("accounts:council_list")
+    template_name = "accounts/council_form.html"
+
+    def get_object(self, queryset=None):
+        council = get_object_or_404(Council, pk=self.kwargs['pk'])
+        return council
+
+    def get_form_kwargs(self):
+        council = get_object_or_404(Council, pk=self.kwargs['pk'])
+        kwargs = super().get_form_kwargs()
+        kwargs.update({'user': council.owner})
+        return kwargs
+
+    def test_func(self):
+        council = get_object_or_404(Council, pk=self.kwargs['pk'])
+        if self.request.user == council.owner:
+            return True
+        else:
+            return False
 
 
 class InviteCreateView(PermissionRequiredMixin, SuccessMessageMixin, FormView):
