@@ -10,7 +10,35 @@
             <h3 class="title">Seminare</h3>
             <h5 class="subtitle">Verzeichnis aller Seminare</h5>
 
+            <article class="message is-primary">
+                <div class="message-header">
+                    Seminar erstellen
+                </div>
+                <div class="message-body">
+                    <div class="block">
+                        Hier kannst du Vorschläge für Seminare auf der Tagung einreichen. Die Vorschläge werden für
+                        alle sichtbar sein und müssen durch die Organisatoren bestätigt werden.
+                    </div>
+                    <div class="buttons">
+                        <a class="button is-primary" href="{% url 'workshops:create_workshop' %}">
+                            Vorschlag einreichen
+                        </a>
+                    </div>
+                </div>
+            </article>
+
             {% for workshop in workshop_list %}
+            <div class="block">
+                <div class="is-pulled-right">
+                    <span class="tag {{ workshop.get_state_color }}">{{ workshop.get_state_display }}</span>
+                </div>
+
+                <p class="has-text-weight-bold">{{ workshop }}</p>
+                <p>{{ workshop.description }}</p>
+                {% if workshop.comment %}
+                    <p class="help is-danger">{{ workshop.comment }}</p>
+                {% endif %}
+            </div>
             {% empty %}
                 <article class="message is-info">
                     <div class="message-body">
