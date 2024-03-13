@@ -10,7 +10,36 @@
             <h3 class="title">Gremien</h3>
             <h5 class="subtitle">Verzeichnis aller Gremien</h5>
 
-            {% if not user.council %}
+            {% if user.council %}
+                {% with user.council as council %}
+                    <article class="message is-primary">
+                        <div class="message-header">
+                            Dein Gremium
+                        </div>
+                        <div class="message-body">
+                            <div class="block">
+                                <div class="icon-text">
+                                    <span class="icon">
+                                        <i class="fa-solid fa-university"></i>
+                                    </span>
+                                    <span>{{ council.university }}</span>
+                                </div>
+                                <div class="icon-text">
+                                    <span class="icon">
+                                        <i class="fa-solid fa-people-group"></i>
+                                    </span>
+                                    <span>{{ council.name }}</span>
+                                </div>
+                            </div>
+                            <div class="buttons">
+                                <a class="button is-primary" href="{% url 'accounts:update_council' council.pk %}">
+                                    Gremium aktualisieren
+                                </a>
+                            </div>
+                        </div>
+                    </article>
+                {% endwith %}
+            {% else %}
                 <article class="message is-warning">
                     <div class="message-header">
                         Benutzer ist keinem Gremium zugewiesen
@@ -32,8 +61,8 @@
 
             {% regroup council_list by university as university_list %}
             {% for university, local_council_list in university_list %}
-                <div class="box">
-                    <p class="title is-5">
+                <div class="block">
+                    <p class="has-text-weight-bold">
                         <span class="icon-text">
                             <span class="icon">
                                 <i class="fa-solid fa-university"></i>
@@ -41,22 +70,20 @@
                             <span>{{ university }}</span>
                         </span>
                     </p>
-
-                    <ul>
-                        {% for council in local_council_list %}
-                            <li>
-                                <span class="icon-text">
-                                    <span class="icon">
-                                        <i class="fa-solid fa-people-group fa-fw"></i>
-                                    </span>
-                                    <span>{{ council.name }}</span>
+                    {% for council in local_council_list %}
+                        <p>
+                            <span class="icon-text">
+                                <span class="icon">
+                                    <i class="fa-solid fa-people-group"></i>
                                 </span>
-                                {% if council == user.council %}
-                                    <span class="tag is-primary">Dein Gremium</span>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                    </ul>
+                                <span>{{ council.name }}</span>
+                            </span>
+
+                            {% for year in council.get_years %}
+                                <span class="tag">{{ year }}</span>
+                            {% endfor %}
+                        </p>
+                    {% endfor %}
                 </div>
             {% empty %}
                 <article class="message is-info">

@@ -4,8 +4,9 @@ from accounts import views
 
 app_name = 'accounts'
 urlpatterns = [
-    path('council/add/', views.CouncilCreateView.as_view(), name='create_council'),
     path('councils/', views.CouncilListView.as_view(), name='council_list'),
+    path('councils/add/', views.CouncilCreateView.as_view(), name='create_council'),
+    path('councils/<int:pk>/edit/', views.CouncilUpdateView.as_view(), name='update_council'),
     path('invite/', views.InviteCreateView.as_view(), name='create_invite'),
     path('login/', views.LoginView.as_view(), name='login'),
     path('logout/', views.LogoutView.as_view(), name='logout'),

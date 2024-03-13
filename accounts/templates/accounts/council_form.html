@@ -1,14 +1,22 @@
 {% extends 'fatama/base.html' %}
 
 {% block title %}
-    {{ block.super }} | Gremium registrieren
+    {{ block.super }} | {% if form.initial %}Gremium bearbeiten{% else %}Gremium registrieren{% endif %}
 {% endblock %}
 
 {% block content %}
     <section class="section">
         <div class="container is-max-desktop">
-            <h3 class="title">Gremium registrieren</h3>
-            <h5 class="subtitle">Erstelle ein neues Gremium, welches dir zugeordnet wird</h5>
+            <h3 class="title">
+                {% if form.initial %}
+                    Gremium bearbeiten
+                {% else %}
+                    Gremium registrieren
+                {% endif %}
+            </h3>
+            {% if form.initial %}
+                <h5 class="subtitle">Erstelle ein neues Gremium, welches dir zugeordnet wird</h5>
+            {% endif %}
 
             <form method="post">
                 {% csrf_token %}
@@ -17,7 +25,13 @@
 
                 <div class="field is-grouped">
                     <div class="control">
-                        <button type="submit" class="button is-primary">Erstellen</button>
+                        <button type="submit" class="button is-primary">
+                            {% if form.initial %}
+                                Aktualisieren
+                            {% else %}
+                                Erstellen
+                            {% endif %}
+                        </button>
                     </div>
                     <div class="control">
                         <a href="{% url 'accounts:council_list' %}" class="button is-light">Abbrechen</a>

@@ -13,7 +13,7 @@ from django.utils import timezone
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 
-from accounts.models import Invite
+from accounts.models import Invite, Council
 
 
 class CouncilCreateViewTest(TestCase):
@@ -60,6 +60,37 @@ class CouncilListViewTest(TestCase):
         self.client.force_login(self.user)
         response = self.client.get(self.path)
         self.assertContains(response, "Verzeichnis aller Gremien")
+
+
+class CouncilUpdateViewTest(TestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(username="john")
+        self.council = Council.objects.create(university="University", name="Student council", owner=self.user)
+        self.path = reverse("accounts:update_council", kwargs={'pk': self.council.pk})
+        self.data = {
+            "university": "New university",
+            "name": "Better student council",
+        }
+
+    def test_public_view(self) -> None:
+        response = self.client.get(self.path)
+        path = reverse("accounts:login")
+        self.assertRedirects(response, f"{path}?next={self.path}")
+
+    def test_public_form_view(self) -> None:
+        response = self.client.post(self.path, data=self.data)
+        path = reverse("accounts:login")
+        self.assertRedirects(response, f"{path}?next={self.path}")
+
+    def test_user_view(self) -> None:
+        self.client.force_login(self.user)
+        response = self.client.get(self.path)
+        self.assertContains(response, "Gremium bearbeiten")
+
+    def test_user_form_view(self) -> None:
+        self.client.force_login(self.user)
+        response = self.client.post(self.path, data=self.data)
+        self.assertRedirects(response, reverse('accounts:council_list'))
 
 
 class InviteCreateViewTest(TestCase):
