@@ -154,6 +154,8 @@ EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.postmarkapp.com')
 
 EMAIL_PORT = os.getenv('EMAIL_PORT', '587')
 
+POSTMARK_API_TOKEN = os.getenv("POSTMARK_API_TOKEN")
+
 EMAIL_HOST_USER = os.getenv('EMAIL_USER')
 
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
