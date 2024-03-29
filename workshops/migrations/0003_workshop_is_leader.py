@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('workshops', '0002_workshop_comment_workshop_congress_and_more'),
+        ("workshops", "0002_workshop_comment_workshop_congress_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='workshop',
-            name='is_leader',
-            field=models.BooleanField(default=True, help_text='Die Redeleitung für diesen Workshop übernehmen.', verbose_name='Redeleitung'),
+            model_name="workshop",
+            name="is_leader",
+            field=models.BooleanField(
+                default=True,
+                help_text="Die Redeleitung für diesen Workshop übernehmen.",
+                verbose_name="Redeleitung",
+            ),
         ),
     ]

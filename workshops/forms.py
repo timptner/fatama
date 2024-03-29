@@ -11,7 +11,11 @@ class WorkshopForm(ModelForm):
         widgets = {
             "title": forms.TextInput(attrs={"class": "input"}),
             "description": forms.Textarea(attrs={"class": "textarea"}),
-            "is_leader": CheckboxInput(attrs={"label": "Ich werde die Redeleitung für diesen Workshop übernehmen."}),
+            "is_leader": CheckboxInput(
+                attrs={
+                    "label": "Ich werde die Redeleitung für diesen Workshop übernehmen."
+                }
+            ),
         }
         help_texts = {
             "is_leader": None,
