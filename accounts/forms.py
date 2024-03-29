@@ -1,4 +1,3 @@
-import markdown
 import re
 import secrets
 
@@ -10,7 +9,6 @@ from django.contrib.auth import forms as auth_forms
 from django.contrib.auth.password_validation import password_validators_help_texts
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
-from django.core.mail import EmailMultiAlternatives
 from django.core.validators import validate_email
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -20,6 +18,7 @@ from django.utils.http import urlsafe_base64_encode
 
 from accounts.models import Council, Invite, Profile
 from fatama.forms import ModelForm, Form
+from fatama.postmark import Mail
 
 
 class AuthenticationForm(auth_forms.AuthenticationForm):
@@ -102,14 +101,12 @@ class InviteForm(Form):
             "sender": invite.sender.get_full_name(),
         }
 
-        subject = "Einladung zur FaTaMa"
-
-        text_content = render_to_string("accounts/mails/invite.md", context, request)
-        html_content = markdown.markdown(text_content)
-
-        mail = EmailMultiAlternatives(subject, text_content, None, [invite.recipient])
-        mail.attach_alternative(html_content, "text/html")
-
+        mail = Mail(
+            "invite",
+            "Einladung zur FaTaMa",
+            render_to_string("accounts/mails/invite.md", context, request),
+            invite.recipient,
+        )
         mail.send()
 
     def save(self, request) -> None:
@@ -169,17 +166,14 @@ class PasswordResetForm(auth_forms.PasswordResetForm):
         )
         url = f"{scheme}://{host}{path}"
 
-        subject = "Zurücksetzen deines Passworts"
-
         context = {"action_url": url, "user": user}
-        text_content = render_to_string(
-            "accounts/mails/password_reset.md", context, request
+
+        mail = Mail(
+            "password-reset",
+            "Zurücksetzen deines Passworts",
+            render_to_string("accounts/mails/password_reset.md", context, request),
+            user.email,
         )
-        html_content = markdown.markdown(text_content)
-
-        mail = EmailMultiAlternatives(subject, text_content, None, [user.email])
-        mail.attach_alternative(html_content, "text/html")
-
         mail.send()
 
     def save(self, *args, **kwargs):

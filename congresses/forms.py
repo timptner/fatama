@@ -1,13 +1,12 @@
-import markdown
-
 from django import forms
 from django.core.exceptions import ValidationError
-from django.core.mail import EmailMultiAlternatives
+from django.http import HttpRequest
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 
 from congresses.models import Attendance, Participant, Portrait
 from fatama.forms import Form, ModelForm, Select, FileInput
+from fatama.postmark import Mail
 
 
 class AttendanceForm(ModelForm):
@@ -133,7 +132,7 @@ class PortraitForm(ModelForm):
         return portrait
 
 
-def send_seat_update_mail(attendance: Attendance, request):
+def send_seat_update_mail(attendance: Attendance, request: HttpRequest):
     scheme = 'https' if request.is_secure() else 'http'
     host = request.get_host()
     path = reverse_lazy('congresses:attendance_detail', kwargs={'pk': attendance.pk})
@@ -150,14 +149,13 @@ def send_seat_update_mail(attendance: Attendance, request):
         },
     }
 
-    subject = "Teilnehmerplätze aktualisiert"
-
-    text_content = render_to_string("congresses/mails/seat_update.md", context, request)
-    html_content = markdown.markdown(text_content)
-
-    mail = EmailMultiAlternatives(subject, text_content, None, [user.email])
-    mail.attach_alternative(html_content, "text/html")
-
+    mail = Mail(
+        "seat-update",
+        "Teilnehmerplätze aktualisiert",
+        render_to_string("congresses/mails/seat_update.md", context, request),
+        user.email,
+        stream="broadcast",
+    )
     mail.send()
 
 
