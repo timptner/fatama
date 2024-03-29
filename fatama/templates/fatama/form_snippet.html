@@ -1,6 +1,6 @@
 {% for error in form.non_field_errors %}
     <div class="notification is-danger">
-        {{ error }}
+        {{ error|safe }}
     </div>
 {% endfor %}
 

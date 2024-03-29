@@ -1,0 +1,29 @@
+{% extends 'fatama/base.html' %}
+
+{% block title %}
+    {{ block.super }} | Teilnehmer exportieren
+{% endblock %}
+
+{% block content %}
+    <section class="section">
+        <div class="container is-max-desktop">
+            <h3 class="title">Teilnehmer exportieren</h3>
+
+            <form method="post">
+                {% csrf_token %}
+
+                {{ form }}
+
+                <div class="field is-grouped">
+                    <div class="control">
+                        <button type="submit" class="button is-primary">Exportieren</button>
+                    </div>
+                    <div class="control">
+                        <a href="{% url 'congresses:attendance_list' %}"
+                           class="button is-light">Abbrechen</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

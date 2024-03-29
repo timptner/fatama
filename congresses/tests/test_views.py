@@ -127,6 +127,46 @@ class CongressDetailViewTest(TestCase):
         self.assertContains(response, self.congress.title)
 
 
+class AttendanceExportView(TestCase):
+    def setUp(self) -> None:
+        self.congress = Congress.objects.create(
+            title="FaTaMa 2024", location="Magdeburg", year=2024
+        )
+        self.path = reverse("congresses:attendance_export")
+        self.user = User.objects.create_user(username="john")
+        self.staff = User.objects.create_user(username="jane", is_staff=True)
+
+    def test_public_view(self) -> None:
+        response = self.client.get(self.path)
+        path = reverse("accounts:login")
+        self.assertRedirects(response, f"{path}?next={self.path}")
+
+    def test_public_form_view(self) -> None:
+        response = self.client.post(self.path)
+        path = reverse("accounts:login")
+        self.assertRedirects(response, f"{path}?next={self.path}")
+
+    def test_user_view(self) -> None:
+        self.client.force_login(self.user)
+        response = self.client.get(self.path)
+        self.assertEqual(response.status_code, 403)
+
+    def test_user_form_view(self) -> None:
+        self.client.force_login(self.user)
+        response = self.client.post(self.path)
+        self.assertEqual(response.status_code, 403)
+
+    def test_staff_view(self) -> None:
+        self.client.force_login(self.staff)
+        response = self.client.get(self.path)
+        self.assertContains(response, "Teilnehmer exportieren")
+
+    def test_staff_form_view(self) -> None:
+        self.client.force_login(self.staff)
+        response = self.client.post(self.path)
+        self.assertEqual(response.status_code, 200)
+
+
 class ParticipantCreateViewTest(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create_user(username="john")

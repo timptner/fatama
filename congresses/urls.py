@@ -12,6 +12,11 @@ urlpatterns = [
     ),
     path("attendances/", views.AttendanceListView.as_view(), name="attendance_list"),
     path(
+        "attendances/export/",
+        views.AttendanceExportView.as_view(),
+        name="attendance_export",
+    ),
+    path(
         "attendances/<int:pk>/",
         views.AttendanceDetailsView.as_view(),
         name="attendance_detail",

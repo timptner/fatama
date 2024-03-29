@@ -43,6 +43,9 @@
                             </div>
                         </div>
                     </div>
+                    <div class="buttons is-pulled-right">
+                        <a class="button is-link" href="{% url 'congresses:attendance_export' %}">Exportieren</a>
+                    </div>
                 </div>
 
                 {% regroup attendance_list by council.university as university_list %}

@@ -1,11 +1,20 @@
+import csv
+
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, FormView, ListView
 
-from congresses.forms import AttendanceForm, ParticipantForm, PortraitForm, SeatForm
-from congresses.models import Attendance, Congress, Participant
+from congresses.forms import (
+    AttendanceForm,
+    ExportForm,
+    ParticipantForm,
+    PortraitForm,
+    SeatForm,
+)
+from congresses.models import Attendance, Congress, Participant, Portrait
 
 
 class AttendanceCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -47,6 +56,72 @@ class AttendanceDetailsView(UserPassesTestMixin, DetailView):
             return True
         else:
             return False
+
+
+class AttendanceExportView(UserPassesTestMixin, FormView):
+    form_class = ExportForm
+    template_name = "congresses/attendance_export.html"
+
+    def test_func(self) -> bool:
+        user = self.request.user
+        if user.is_superuser:
+            return True
+        elif user.is_staff:
+            return True
+        else:
+            return False
+
+    def form_valid(self, form):
+        congress = form.cleaned_data["congress"]
+        council = form.cleaned_data["council"]
+        if council:
+            queryset = Participant.objects.filter(
+                attendance__congress=congress, attendance__council=council
+            )
+        else:
+            queryset = Participant.objects.filter(attendance__congress=congress)
+
+        response = HttpResponse(
+            content_type="text/csv",
+            headers={"Content-Disposition": 'attachment; filename="Teilnehmer.csv"'},
+        )
+
+        writer = csv.writer(response)
+        writer.writerow(
+            [
+                "Nachname",
+                "Vorname",
+                "Hochschule",
+                "Gremium",
+                "Verpflegung",
+                "Allergien",
+                "Deutschlandticket",
+                "Konfektion",
+            ]
+        )
+        for participant in queryset.order_by(
+            "last_name",
+            "first_name",
+            "attendance__council__university",
+            "attendance__council__name",
+        ).select_related():
+            row = [
+                participant.last_name,
+                participant.first_name,
+                participant.attendance.council.university,
+                participant.attendance.council.name,
+            ]
+            try:
+                row += [
+                    participant.portrait.get_diet_display(),
+                    participant.portrait.intolerances,
+                    participant.portrait.get_railcard_display(),
+                    participant.portrait.get_size_display(),
+                ]
+            except Portrait.DoesNotExist:
+                row += [None] * 4
+            writer.writerow(row)
+        return response
 
 
 class AttendanceListView(UserPassesTestMixin, ListView):

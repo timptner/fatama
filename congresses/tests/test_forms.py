@@ -3,7 +3,13 @@ from django.contrib.auth.models import User
 from django.core.files.uploadedfile import SimpleUploadedFile
 
 from accounts.models import Council
-from congresses.forms import AttendanceForm, ParticipantForm, PortraitForm, SeatForm
+from congresses.forms import (
+    AttendanceForm,
+    ExportForm,
+    ParticipantForm,
+    PortraitForm,
+    SeatForm,
+)
 from congresses.models import Attendance, Congress, Participant, Portrait
 
 
@@ -21,6 +27,28 @@ class AttendanceFormTest(TestCase):
 
     def test_form(self) -> None:
         form = AttendanceForm(data={}, congress=self.congress, council=self.council)
+        self.assertTrue(form.is_valid())
+
+
+class ExportFormTest(TestCase):
+    def setUp(self) -> None:
+        self.congress = Congress.objects.create(
+            title="FaTaMa 2024", location="Magdeburg"
+        )
+        user = User.objects.create_user(username="john")
+        self.council = Council.objects.create(
+            owner=user,
+            university="Otto-von-Guericke-Universität Magdeburg",
+            name="Fachschaftsrat Maschinenbau",
+        )
+        Attendance.objects.create(congress=self.congress, council=self.council)
+
+    def test_form(self) -> None:
+        data = {
+            "congress": self.congress,
+            "council": self.council,
+        }
+        form = ExportForm(data=data)
         self.assertTrue(form.is_valid())
 
 
