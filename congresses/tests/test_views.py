@@ -224,7 +224,7 @@ class PortraitCreateViewTest(TestCase):
 
 class SeatFormViewTest(TestCase):
     def setUp(self) -> None:
-        self.user = User.objects.create_user(username="john", is_staff=True)
+        self.user = User.objects.create_user(username="john", email="john.doe@example.org", is_staff=True)
         permission = Permission.objects.get(codename="view_attendance")
         self.user.user_permissions.add(permission)
         congress = Congress.objects.create(
