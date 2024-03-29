@@ -1,5 +1,5 @@
 from django.contrib.auth.models import User, Permission
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from accounts.models import Council
@@ -262,6 +262,7 @@ class PortraitCreateViewTest(TestCase):
         self.assertRedirects(response, path)
 
 
+@override_settings(POSTMARK_API_TOKEN="POSTMARK_API_TEST")
 class SeatFormViewTest(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create_user(

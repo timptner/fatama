@@ -7,7 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import User, Permission
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.flatpages.models import FlatPage, Site
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.encoding import force_bytes
@@ -95,6 +95,7 @@ class CouncilUpdateViewTest(TestCase):
         self.assertRedirects(response, reverse("accounts:council_list"))
 
 
+@override_settings(POSTMARK_API_TOKEN="POSTMARK_API_TEST")
 class InviteCreateViewTest(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create_user("john")

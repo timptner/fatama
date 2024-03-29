@@ -22,9 +22,6 @@ HTTP_CODES = {
 
 class Mail:
     endpoint = "/email"
-    headers = {
-        "X-Postmark-Server-Token": settings.POSTMARK_API_TOKEN,
-    }
 
     def __init__(
         self,
@@ -35,6 +32,9 @@ class Mail:
         sender: str = settings.DEFAULT_FROM_EMAIL,
         stream: str = "outbound",
     ) -> None:
+        self.headers = {
+            "X-Postmark-Server-Token": settings.POSTMARK_API_TOKEN,
+        }
         self.tag = tag
         self.subject = subject
         self.text = text
