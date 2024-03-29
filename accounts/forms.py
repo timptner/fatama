@@ -154,7 +154,10 @@ class PasswordResetForm(auth_forms.PasswordResetForm):
         self.fields["email"].widget.attrs.update({"class": "input"})
         self.fields["email"].label = "E-Mail-Adresse"
 
-    def send_mail(self, request, token_generator, user) -> None:
+    def send_mail(self, *args, **kwargs) -> None:
+        request = kwargs["request"]
+        token_generator = kwargs["token_generator"]
+        user = kwargs["user"]
         scheme = "https" if request.is_secure() else "http"
         host = request.get_host()
         path = reverse_lazy(
@@ -179,10 +182,12 @@ class PasswordResetForm(auth_forms.PasswordResetForm):
 
         mail.send()
 
-    def save(self, request, token_generator, *args, **kwargs):
+    def save(self, *args, **kwargs):
         email = self.cleaned_data["email"]
+        request = kwargs["request"]
+        token_generator = kwargs["token_generator"]
         for user in self.get_users(email):
-            self.send_mail(request, token_generator, user)
+            self.send_mail(request=request, token_generator=token_generator, user=user)
 
 
 class ProfileForm(ModelForm):

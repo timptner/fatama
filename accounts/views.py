@@ -123,10 +123,6 @@ class PasswordResetView(SuccessMessageMixin, auth_views.PasswordResetView):
     success_url = reverse_lazy("landing_page")
     template_name = "accounts/password_reset.html"
 
-    def form_valid(self, form):
-        form.save(request=self.request, token_generator=self.token_generator)
-        return super().form_valid(form)
-
 
 class PasswordResetConfirm(SuccessMessageMixin, auth_views.PasswordResetConfirmView):
     form_class = SetPasswordForm
