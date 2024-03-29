@@ -15,6 +15,11 @@ class Workshop(models.Model):
         REJECTED: "Abgelehnt",
     }
     author = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    is_leader = models.BooleanField(
+        "Redeleitung",
+        default=True,
+        help_text="Die Redeleitung für diesen Workshop übernehmen.",
+    )
     title = models.CharField("Titel", max_length=200, unique=True)
     description = models.TextField("Beschreibung")
     state = models.CharField("Status", max_length=1, choices=STATE_CHOICES)

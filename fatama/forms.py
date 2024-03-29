@@ -20,3 +20,7 @@ class Select(forms.Select):
 
 class FileInput(forms.FileInput):
     template_name = "fatama/forms/widgets/file.html"
+
+
+class CheckboxInput(forms.CheckboxInput):
+    template_name = "fatama/forms/widgets/checkbox.html"

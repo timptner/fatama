@@ -10,7 +10,7 @@ from workshops.models import Workshop
 
 @admin.register(Workshop)
 class WorkshopAdmin(admin.ModelAdmin):
-    list_display = ["title", "author"]
+    list_display = ["title", "author", "is_leader"]
     list_filter = ["state", "congress__year", "author"]
 
     def save_form(self, request, form, change):
