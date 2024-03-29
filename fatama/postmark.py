@@ -7,6 +7,18 @@ from markdown import markdown
 
 DOMAIN = "https://api.postmarkapp.com"
 
+HTTP_CODES = {
+    200: "Success",
+    401: "Unauthorized",
+    404: "Entity doesn't exist",
+    413: "Payload Too Large",
+    415: "Unsupported Media Type",
+    422: "Unprocessable Entity",
+    429: "Rate Limit Exceeded",
+    500: "Internal Server Error",
+    503: "Service Unavailable",
+}
+
 
 class Mail:
     endpoint = "/email"
@@ -45,19 +57,19 @@ class Mail:
         response = requests.post(url, json=payload, headers=self.headers)
 
         status = response.status_code
-        if status == 401:
-            raise Exception("Missing authorization header")
-
-        if status == 422:
-            raise Exception("Missing sender signature for email sender")
-
         if status != 200:
-            raise Exception("Unsupported status code: %d", status)
+            answer = HTTP_CODES[status]
+            if status == 422:
+                data = response.json()
+                code = data["ErrorCode"]
+                message = data["Message"]
+                answer = f"{answer} (ErrorCode: {code}, Message: {message})"
+            raise Exception(answer)
 
         data = response.json()
 
         error = data["ErrorCode"]
         if error != 0:
-            raise Exception("Unsupported error code: %d", error)
+            raise Exception(f"Unsupported error code: {error}")
 
         return status == 200 and error == 0
