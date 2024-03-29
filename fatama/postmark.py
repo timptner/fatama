@@ -1,13 +1,9 @@
-import logging
-
 from urllib.parse import urljoin
 
 import requests
 
 from django.conf import settings
 from markdown import markdown
-
-logger = logging.getLogger(__name__)
 
 DOMAIN = "https://api.postmarkapp.com"
 
@@ -50,18 +46,18 @@ class Mail:
 
         status = response.status_code
         if status == 401:
-            logger.error("Missing authorization header")
+            raise Exception("Missing authorization header")
 
         if status == 422:
-            logger.error("Missing sender signature for email sender")
+            raise Exception("Missing sender signature for email sender")
 
         if status != 200:
-            logger.error("Unsupported status code: %d", status)
+            raise Exception("Unsupported status code: %d", status)
 
         data = response.json()
 
         error = data["ErrorCode"]
         if error != 0:
-            logger.warning("Unsupported error code: %d", error)
+            raise Exception("Unsupported error code: %d", error)
 
         return status == 200 and error == 0
