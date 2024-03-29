@@ -5,36 +5,39 @@ from django.utils import timezone
 
 class Council(models.Model):
     owner = models.OneToOneField(User, on_delete=models.PROTECT)
-    university = models.CharField("Universität", max_length=150,
-                                  help_text="Vermeide Akronyme.")
+    university = models.CharField(
+        "Universität", max_length=150, help_text="Vermeide Akronyme."
+    )
     name = models.CharField("Name", help_text="Name deiner Fachschaft.")
 
     class Meta:
         verbose_name = "Gremium"
         verbose_name_plural = "Gremien"
-        ordering = ['university', 'name']
+        ordering = ["university", "name"]
         constraints = [
-            models.UniqueConstraint(fields=['university', 'name'], name='unique_council'),
+            models.UniqueConstraint(
+                fields=["university", "name"], name="unique_council"
+            ),
         ]
 
     def __str__(self) -> str:
-        return f'{self.name} ({self.university})'
+        return f"{self.name} ({self.university})"
 
     def get_years(self) -> list[int]:
-        return self.attendance_set.values_list('congress__year', flat=True)
+        return self.attendance_set.values_list("congress__year", flat=True)
 
 
 class Invite(models.Model):
-    token = models.CharField('Token', unique=True, max_length=20)
-    recipient = models.EmailField('Empfänger')
+    token = models.CharField("Token", unique=True, max_length=20)
+    recipient = models.EmailField("Empfänger")
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField('Erstellt am', auto_now_add=True)
-    expired_at = models.DateTimeField('Abgelaufen am')
+    created_at = models.DateTimeField("Erstellt am", auto_now_add=True)
+    expired_at = models.DateTimeField("Abgelaufen am")
 
     class Meta:
         verbose_name = "Einladung"
         verbose_name_plural = "Einladungen"
-        ordering = ['recipient']
+        ordering = ["recipient"]
 
     def __str__(self) -> str:
         return self.recipient
@@ -59,7 +62,7 @@ class Profile(models.Model):
         verbose_name = "Profil"
         verbose_name_plural = "Profile"
         permissions = [
-            ('can_invite', "Kann weitere Benutzer einladen"),
+            ("can_invite", "Kann weitere Benutzer einladen"),
         ]
 
     def __str__(self) -> str:

@@ -6,20 +6,32 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('congresses', '0004_attendance_unique_attendance'),
+        ("congresses", "0004_attendance_unique_attendance"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='portrait',
-            name='certificate',
-            field=models.FileField(null=True, upload_to=congresses.models.participant_directory_path, validators=[django.core.validators.FileExtensionValidator(['pdf'])], verbose_name='Immatrikulationsbescheinigung'),
+            model_name="portrait",
+            name="certificate",
+            field=models.FileField(
+                null=True,
+                upload_to=congresses.models.participant_directory_path,
+                validators=[django.core.validators.FileExtensionValidator(["pdf"])],
+                verbose_name="Immatrikulationsbescheinigung",
+            ),
         ),
         migrations.AlterField(
-            model_name='portrait',
-            name='railcard',
-            field=models.CharField(choices=[('NONE', 'Nicht vorhanden'), ('CARD', 'Im Studentenausweis inbegriffen'), ('SELF', 'Eigenständig erworben')], max_length=4, verbose_name='Deutschlandticket'),
+            model_name="portrait",
+            name="railcard",
+            field=models.CharField(
+                choices=[
+                    ("NONE", "Nicht vorhanden"),
+                    ("CARD", "Im Studentenausweis inbegriffen"),
+                    ("SELF", "Eigenständig erworben"),
+                ],
+                max_length=4,
+                verbose_name="Deutschlandticket",
+            ),
         ),
     ]

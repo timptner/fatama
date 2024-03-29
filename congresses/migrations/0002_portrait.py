@@ -5,20 +5,62 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('congresses', '0001_initial'),
+        ("congresses", "0001_initial"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Portrait',
+            name="Portrait",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('diet', models.CharField(choices=[('V+', 'Vegan'), ('V', 'Vegetarisch'), ('O', 'Omnivore')], max_length=2, verbose_name='Ernährungsweise')),
-                ('intolerances', models.CharField(blank=True, max_length=200, verbose_name='Unverträglichkeiten')),
-                ('railcard', models.CharField(choices=[('NONE', 'Keine Vergünstigung'), ('25', 'BahnCard 25'), ('50', 'BahnCard 50'), ('100', 'BahnCard 100'), ('FREE', 'Deutschlandticket')], max_length=4, verbose_name='Bahn-Ticket')),
-                ('participant', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to='congresses.participant')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "diet",
+                    models.CharField(
+                        choices=[
+                            ("V+", "Vegan"),
+                            ("V", "Vegetarisch"),
+                            ("O", "Omnivore"),
+                        ],
+                        max_length=2,
+                        verbose_name="Ernährungsweise",
+                    ),
+                ),
+                (
+                    "intolerances",
+                    models.CharField(
+                        blank=True, max_length=200, verbose_name="Unverträglichkeiten"
+                    ),
+                ),
+                (
+                    "railcard",
+                    models.CharField(
+                        choices=[
+                            ("NONE", "Keine Vergünstigung"),
+                            ("25", "BahnCard 25"),
+                            ("50", "BahnCard 50"),
+                            ("100", "BahnCard 100"),
+                            ("FREE", "Deutschlandticket"),
+                        ],
+                        max_length=4,
+                        verbose_name="Bahn-Ticket",
+                    ),
+                ),
+                (
+                    "participant",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="congresses.participant",
+                    ),
+                ),
             ],
         ),
     ]

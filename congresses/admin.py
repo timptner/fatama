@@ -8,9 +8,9 @@ from congresses.models import Attendance, Congress, Participant, Portrait
 
 @admin.register(Attendance)
 class AttendanceAdmin(admin.ModelAdmin):
-    list_display = ['council', 'congress', 'seats']
-    list_filter = ['council', 'congress__year']
-    actions = ['add_seats']
+    list_display = ["council", "congress", "seats"]
+    list_filter = ["council", "congress__year"]
+    actions = ["add_seats"]
     form = AttendanceAdminForm
 
     def save_form(self, request, form, change):
@@ -19,35 +19,35 @@ class AttendanceAdmin(admin.ModelAdmin):
 
     @admin.action(description="Update seats of selected attendances")
     def add_seats(self, request, queryset):
-        selected = queryset.values_list('pk', flat=True)
-        path = reverse_lazy('congresses:update_seats')
-        ids = ','.join([str(pk) for pk in selected])
-        return redirect(f'{path}?ids={ids}')
+        selected = queryset.values_list("pk", flat=True)
+        path = reverse_lazy("congresses:update_seats")
+        ids = ",".join([str(pk) for pk in selected])
+        return redirect(f"{path}?ids={ids}")
 
 
 @admin.register(Congress)
 class CongressAdmin(admin.ModelAdmin):
-    list_display = ['title', 'location', 'year']
+    list_display = ["title", "location", "year"]
     fieldsets = [
         (
             None,
             {
-                'fields': ['year', 'location', 'title', 'message'],
+                "fields": ["year", "location", "title", "message"],
             },
         ),
         (
             "Organisatoren",
             {
-                'fields': ['support_email', 'support_team'],
-            }
+                "fields": ["support_email", "support_team"],
+            },
         ),
     ]
 
 
 @admin.register(Participant)
 class ParticipantAdmin(admin.ModelAdmin):
-    list_filter = ['attendance']
-    list_display = ['full_name', 'attendance']
+    list_filter = ["attendance"]
+    list_display = ["full_name", "attendance"]
 
 
 @admin.register(Portrait)

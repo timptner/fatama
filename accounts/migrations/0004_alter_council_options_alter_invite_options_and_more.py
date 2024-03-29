@@ -4,22 +4,33 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('accounts', '0003_remove_profile_university_council_and_more'),
+        ("accounts", "0003_remove_profile_university_council_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='council',
-            options={'ordering': ['university', 'name'], 'verbose_name': 'Gremium', 'verbose_name_plural': 'Gremien'},
+            name="council",
+            options={
+                "ordering": ["university", "name"],
+                "verbose_name": "Gremium",
+                "verbose_name_plural": "Gremien",
+            },
         ),
         migrations.AlterModelOptions(
-            name='invite',
-            options={'ordering': ['recipient'], 'verbose_name': 'Einladung', 'verbose_name_plural': 'Einladungen'},
+            name="invite",
+            options={
+                "ordering": ["recipient"],
+                "verbose_name": "Einladung",
+                "verbose_name_plural": "Einladungen",
+            },
         ),
         migrations.AlterModelOptions(
-            name='profile',
-            options={'permissions': [('can_invite', 'Kann weitere Benutzer einladen')], 'verbose_name': 'Profil', 'verbose_name_plural': 'Profile'},
+            name="profile",
+            options={
+                "permissions": [("can_invite", "Kann weitere Benutzer einladen")],
+                "verbose_name": "Profil",
+                "verbose_name_plural": "Profile",
+            },
         ),
     ]

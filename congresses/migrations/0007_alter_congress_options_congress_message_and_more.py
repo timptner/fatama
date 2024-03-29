@@ -4,38 +4,53 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('congresses', '0006_alter_attendance_options_alter_congress_options_and_more'),
+        ("congresses", "0006_alter_attendance_options_alter_congress_options_and_more"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='congress',
-            options={'ordering': ['-year'], 'verbose_name': 'Tagung', 'verbose_name_plural': 'Tagungen'},
+            name="congress",
+            options={
+                "ordering": ["-year"],
+                "verbose_name": "Tagung",
+                "verbose_name_plural": "Tagungen",
+            },
         ),
         migrations.AddField(
-            model_name='congress',
-            name='message',
-            field=models.TextField(blank=True, verbose_name='Botschaft'),
+            model_name="congress",
+            name="message",
+            field=models.TextField(blank=True, verbose_name="Botschaft"),
         ),
         migrations.AddField(
-            model_name='congress',
-            name='year',
-            field=models.IntegerField(null=True, unique=True, verbose_name='Jahr'),
+            model_name="congress",
+            name="year",
+            field=models.IntegerField(null=True, unique=True, verbose_name="Jahr"),
         ),
         migrations.AlterField(
-            model_name='congress',
-            name='location',
-            field=models.CharField(help_text='Die Stadt reicht aus.', max_length=150, verbose_name='Austragungsort'),
+            model_name="congress",
+            name="location",
+            field=models.CharField(
+                help_text="Die Stadt reicht aus.",
+                max_length=150,
+                verbose_name="Austragungsort",
+            ),
         ),
         migrations.AlterField(
-            model_name='congress',
-            name='title',
-            field=models.CharField(help_text='Verwende einen knackigen Titel und nicht nur "FaTaMa".', max_length=50, verbose_name='Titel'),
+            model_name="congress",
+            name="title",
+            field=models.CharField(
+                help_text='Verwende einen knackigen Titel und nicht nur "FaTaMa".',
+                max_length=50,
+                verbose_name="Titel",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='congress',
-            constraint=models.CheckConstraint(check=models.Q(('year__gte', 2000), ('year__lte', 2050)), name='valid_year', violation_error_message='Jahr muss zwischen 2000 und 2050 liegen.'),
+            model_name="congress",
+            constraint=models.CheckConstraint(
+                check=models.Q(("year__gte", 2000), ("year__lte", 2050)),
+                name="valid_year",
+                violation_error_message="Jahr muss zwischen 2000 und 2050 liegen.",
+            ),
         ),
     ]

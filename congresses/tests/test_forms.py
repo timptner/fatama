@@ -9,8 +9,10 @@ from congresses.models import Attendance, Congress, Participant, Portrait
 
 class AttendanceFormTest(TestCase):
     def setUp(self) -> None:
-        self.congress = Congress.objects.create(title="FaTaMa 2024", location="Magdeburg")
-        user = User.objects.create_user(username='john')
+        self.congress = Congress.objects.create(
+            title="FaTaMa 2024", location="Magdeburg"
+        )
+        user = User.objects.create_user(username="john")
         self.council = Council.objects.create(
             owner=user,
             university="Otto-von-Guericke-Universität Magdeburg",
@@ -24,7 +26,7 @@ class AttendanceFormTest(TestCase):
 
 class ParticipantFormTest(TestCase):
     def setUp(self) -> None:
-        user = User.objects.create_user(username='john')
+        user = User.objects.create_user(username="john")
         council = Council.objects.create(
             owner=user,
             university="Otto-von-Guericke-Universität Magdeburg",
@@ -35,8 +37,8 @@ class ParticipantFormTest(TestCase):
 
     def test_form(self) -> None:
         data = {
-            'first_name': 'John',
-            'last_name': 'Doe',
+            "first_name": "John",
+            "last_name": "Doe",
         }
         form = ParticipantForm(data=data, attendance=self.attendance)
         self.assertTrue(form.is_valid())
@@ -44,25 +46,29 @@ class ParticipantFormTest(TestCase):
 
 class PortraitFormTest(TestCase):
     def setUp(self) -> None:
-        user = User.objects.create(username='john')
+        user = User.objects.create(username="john")
         council = Council.objects.create(
             owner=user,
             university="Otto-von-Guericke-Universität Magdeburg",
             name="Fachschaftsrat Maschinenbau",
         )
-        congress = Congress.objects.create(title='FaTaMa 2024', location='Magdeburg')
+        congress = Congress.objects.create(title="FaTaMa 2024", location="Magdeburg")
         attendance = Attendance.objects.create(council=council, congress=congress)
-        self.participant = Participant.objects.create(attendance=attendance, first_name='John', last_name='Doe')
+        self.participant = Participant.objects.create(
+            attendance=attendance, first_name="John", last_name="Doe"
+        )
 
     def test_form(self) -> None:
         data = {
-            'diet': Portrait.VEGAN,
-            'intolerances': '',
-            'size': Portrait.MEDIUM,
-            'railcard': Portrait.STUDENT_CARD,
+            "diet": Portrait.VEGAN,
+            "intolerances": "",
+            "size": Portrait.MEDIUM,
+            "railcard": Portrait.STUDENT_CARD,
         }
         files = {
-            'certificate': SimpleUploadedFile('certificate.pdf', b'test', 'application/pdf'),
+            "certificate": SimpleUploadedFile(
+                "certificate.pdf", b"test", "application/pdf"
+            ),
         }
         form = PortraitForm(data=data, files=files, participant=self.participant)
         self.assertTrue(form.is_valid())
@@ -70,7 +76,7 @@ class PortraitFormTest(TestCase):
 
 class SeatFormTest(TestCase):
     def setUp(self) -> None:
-        user = User.objects.create_user(username='john')
+        user = User.objects.create_user(username="john")
         congress = Congress.objects.create(title="FaTaMa 2024", location="Magdeburg")
         council = Council.objects.create(
             owner=user,
@@ -81,5 +87,5 @@ class SeatFormTest(TestCase):
         self.ids = [attendance.pk]
 
     def test_form(self):
-        form = SeatForm(ids=self.ids, data={'seats': 5})
+        form = SeatForm(ids=self.ids, data={"seats": 5})
         self.assertTrue(form.is_valid())

@@ -1,7 +1,11 @@
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import (
+    LoginRequiredMixin,
+    PermissionRequiredMixin,
+    UserPassesTestMixin,
+)
 from django.contrib.auth import logout, views as auth_views
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404, render, redirect
@@ -49,17 +53,17 @@ class CouncilUpdateView(UserPassesTestMixin, SuccessMessageMixin, UpdateView):
     template_name = "accounts/council_form.html"
 
     def get_object(self, queryset=None):
-        council = get_object_or_404(Council, pk=self.kwargs['pk'])
+        council = get_object_or_404(Council, pk=self.kwargs["pk"])
         return council
 
     def get_form_kwargs(self):
-        council = get_object_or_404(Council, pk=self.kwargs['pk'])
+        council = get_object_or_404(Council, pk=self.kwargs["pk"])
         kwargs = super().get_form_kwargs()
-        kwargs.update({'user': council.owner})
+        kwargs.update({"user": council.owner})
         return kwargs
 
     def test_func(self):
-        council = get_object_or_404(Council, pk=self.kwargs['pk'])
+        council = get_object_or_404(Council, pk=self.kwargs["pk"])
         if self.request.user == council.owner:
             return True
         else:

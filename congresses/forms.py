@@ -31,13 +31,13 @@ class AttendanceForm(ModelForm):
 class AttendanceAdminForm(ModelForm):
     class Meta:
         model = Attendance
-        fields = ['congress', 'council', 'seats']
+        fields = ["congress", "council", "seats"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
     def clean_seats(self) -> int:
-        data = self.cleaned_data['seats']
+        data = self.cleaned_data["seats"]
         attendance: Attendance = self.instance
         if attendance.pk is not None:
             used = attendance.participant_set.count()
@@ -45,23 +45,23 @@ class AttendanceAdminForm(ModelForm):
                 raise ValidationError(
                     "Die Anzahl der Plätze kann nicht kleiner als die Anzahl "
                     "bereits angemeldeter Teilnehmer (%(amount)s) sein.",
-                    params={'amount': used},
+                    params={"amount": used},
                     code="too_less",
                 )
         return data
 
     def send_mail(self, request) -> None:
-        if 'seats' in self.changed_data:
+        if "seats" in self.changed_data:
             send_seat_update_mail(self.instance, request)
 
 
 class ParticipantForm(ModelForm):
     class Meta:
         model = Participant
-        fields = ['first_name', 'last_name']
+        fields = ["first_name", "last_name"]
         widgets = {
-            'first_name': forms.TextInput(attrs={'class': 'input'}),
-            'last_name': forms.TextInput(attrs={'class': 'input'}),
+            "first_name": forms.TextInput(attrs={"class": "input"}),
+            "last_name": forms.TextInput(attrs={"class": "input"}),
         }
 
     def __init__(self, attendance, *args, **kwargs):
@@ -80,33 +80,33 @@ def get_human_size(size: float) -> str:
     """Convert file size (in bytes) to human version."""
     if size > 1e9:
         size = size * 1e-9
-        unit = 'GB'
+        unit = "GB"
     elif size > 1e6:
         size = size * 1e-6
-        unit = 'MB'
+        unit = "MB"
     elif size > 1e3:
         size = size * 1e-3
-        unit = 'KB'
+        unit = "KB"
     else:
-        unit = 'B'
-    return f'{size:.1f} {unit}'
+        unit = "B"
+    return f"{size:.1f} {unit}"
 
 
 class PortraitForm(ModelForm):
     class Meta:
         model = Portrait
-        fields = ['diet', 'intolerances', 'size', 'railcard', 'certificate']
+        fields = ["diet", "intolerances", "size", "railcard", "certificate"]
         widgets = {
-            'diet': Select(),
-            'intolerances': forms.TextInput(attrs={'class': 'input'}),
-            'size': Select(),
-            'railcard': Select(),
-            'certificate': FileInput(attrs={'accept': '.pdf'}),
+            "diet": Select(),
+            "intolerances": forms.TextInput(attrs={"class": "input"}),
+            "size": Select(),
+            "railcard": Select(),
+            "certificate": FileInput(attrs={"accept": ".pdf"}),
         }
         help_texts = {
-            'intolerances': "Optional.",
-            'size': "Unisex T-Shirt.",
-            'certificate': "PDF-Datei. Maximal 2 MB."
+            "intolerances": "Optional.",
+            "size": "Unisex T-Shirt.",
+            "certificate": "PDF-Datei. Maximal 2 MB.",
         }
 
     def __init__(self, participant, *args, **kwargs) -> None:
@@ -114,13 +114,13 @@ class PortraitForm(ModelForm):
         super().__init__(*args, **kwargs)
 
     def clean_certificate(self):
-        certificate = self.cleaned_data.get('certificate')
+        certificate = self.cleaned_data.get("certificate")
         if certificate.size > 2e6:
             human_size = get_human_size(certificate.size)
             raise ValidationError(
                 "Datei ist zu groß. (%(human_size)s)",
-                params={'human_size': human_size},
-                code='size_exceeded',
+                params={"human_size": human_size},
+                code="size_exceeded",
             )
         return certificate
 
@@ -133,19 +133,19 @@ class PortraitForm(ModelForm):
 
 
 def send_seat_update_mail(attendance: Attendance, request: HttpRequest):
-    scheme = 'https' if request.is_secure() else 'http'
+    scheme = "https" if request.is_secure() else "http"
     host = request.get_host()
-    path = reverse_lazy('congresses:attendance_detail', kwargs={'pk': attendance.pk})
+    path = reverse_lazy("congresses:attendance_detail", kwargs={"pk": attendance.pk})
     user = attendance.council.owner
     url = f"{scheme}://{host}{path}"
 
     context = {
-        'recipient': user.first_name,
-        'attendance': attendance,
-        'action_url': url,
-        'seats': {
-            'total': attendance.seats,
-            'free': attendance.remaining_seats(),
+        "recipient": user.first_name,
+        "attendance": attendance,
+        "action_url": url,
+        "seats": {
+            "total": attendance.seats,
+            "free": attendance.remaining_seats(),
         },
     }
 
@@ -162,7 +162,7 @@ def send_seat_update_mail(attendance: Attendance, request: HttpRequest):
 class SeatForm(Form):
     seats = forms.IntegerField(
         label="Plätze",
-        widget=forms.NumberInput(attrs={'class': 'input'}),
+        widget=forms.NumberInput(attrs={"class": "input"}),
     )
 
     def __init__(self, ids, *args, **kwargs):
@@ -170,22 +170,23 @@ class SeatForm(Form):
         super().__init__(*args, **kwargs)
 
     def clean_seats(self) -> int:
-        data = self.cleaned_data['seats']
+        data = self.cleaned_data["seats"]
         queryset = Attendance.objects.filter(pk__in=self.ids)
         for attendance in queryset:
             used = attendance.participant_set.count()
             if data < used:
                 error = ValidationError(
-                    "%(attendance)s hat bereits %(amount)s Platz belegt." if used == 1 else
-                    "%(attendance)s hat bereits %(amount)s Plätze belegt.",
-                    params={'attendance': attendance, 'amount': used},
+                    "%(attendance)s hat bereits %(amount)s Platz belegt."
+                    if used == 1
+                    else "%(attendance)s hat bereits %(amount)s Plätze belegt.",
+                    params={"attendance": attendance, "amount": used},
                     code="too_less",
                 )
-                self.add_error('seats', error)
+                self.add_error("seats", error)
         return data
 
     def save(self, request) -> None:
-        seats = self.cleaned_data.get('seats')
+        seats = self.cleaned_data.get("seats")
         queryset = Attendance.objects.filter(pk__in=self.ids)
         for attendance in queryset:
             if attendance.seats != seats:

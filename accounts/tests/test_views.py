@@ -65,8 +65,10 @@ class CouncilListViewTest(TestCase):
 class CouncilUpdateViewTest(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create_user(username="john")
-        self.council = Council.objects.create(university="University", name="Student council", owner=self.user)
-        self.path = reverse("accounts:update_council", kwargs={'pk': self.council.pk})
+        self.council = Council.objects.create(
+            university="University", name="Student council", owner=self.user
+        )
+        self.path = reverse("accounts:update_council", kwargs={"pk": self.council.pk})
         self.data = {
             "university": "New university",
             "name": "Better student council",
@@ -90,7 +92,7 @@ class CouncilUpdateViewTest(TestCase):
     def test_user_form_view(self) -> None:
         self.client.force_login(self.user)
         response = self.client.post(self.path, data=self.data)
-        self.assertRedirects(response, reverse('accounts:council_list'))
+        self.assertRedirects(response, reverse("accounts:council_list"))
 
 
 class InviteCreateViewTest(TestCase):

@@ -6,6 +6,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'fatama.settings')
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "fatama.settings")
 
 application = get_asgi_application()

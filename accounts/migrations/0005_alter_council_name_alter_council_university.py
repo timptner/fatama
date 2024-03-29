@@ -4,20 +4,25 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('accounts', '0004_alter_council_options_alter_invite_options_and_more'),
+        ("accounts", "0004_alter_council_options_alter_invite_options_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='council',
-            name='name',
-            field=models.CharField(help_text='Name deiner Fachschaft.', verbose_name='Name'),
+            model_name="council",
+            name="name",
+            field=models.CharField(
+                help_text="Name deiner Fachschaft.", verbose_name="Name"
+            ),
         ),
         migrations.AlterField(
-            model_name='council',
-            name='university',
-            field=models.CharField(help_text='Vermeide Akronyme.', max_length=150, verbose_name='Universität'),
+            model_name="council",
+            name="university",
+            field=models.CharField(
+                help_text="Vermeide Akronyme.",
+                max_length=150,
+                verbose_name="Universität",
+            ),
         ),
     ]

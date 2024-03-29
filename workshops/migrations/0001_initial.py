@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -15,18 +14,47 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Workshop',
+            name="Workshop",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200, unique=True, verbose_name='Titel')),
-                ('description', models.TextField(verbose_name='Beschreibung')),
-                ('state', models.CharField(choices=[('S', 'Vorgeschlagen'), ('A', 'Angenommen'), ('R', 'Abgelehnt')], max_length=1, verbose_name='Status')),
-                ('author', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "title",
+                    models.CharField(max_length=200, unique=True, verbose_name="Titel"),
+                ),
+                ("description", models.TextField(verbose_name="Beschreibung")),
+                (
+                    "state",
+                    models.CharField(
+                        choices=[
+                            ("S", "Vorgeschlagen"),
+                            ("A", "Angenommen"),
+                            ("R", "Abgelehnt"),
+                        ],
+                        max_length=1,
+                        verbose_name="Status",
+                    ),
+                ),
+                (
+                    "author",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Seminar',
-                'verbose_name_plural': 'Seminare',
-                'ordering': ['title'],
+                "verbose_name": "Seminar",
+                "verbose_name_plural": "Seminare",
+                "ordering": ["title"],
             },
         ),
     ]

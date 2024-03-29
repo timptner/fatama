@@ -4,16 +4,26 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('congresses', '0007_alter_congress_options_congress_message_and_more'),
+        ("congresses", "0007_alter_congress_options_congress_message_and_more"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='portrait',
-            name='size',
-            field=models.CharField(choices=[('XS', 'Sehr klein (XS)'), ('S', 'Klein (S)'), ('M', 'Mittel (M)'), ('L', 'Groß (L)'), ('XL', 'Sehr groß (XL)')], default='M', max_length=2, verbose_name='Konfektionsgröße'),
+            model_name="portrait",
+            name="size",
+            field=models.CharField(
+                choices=[
+                    ("XS", "Sehr klein (XS)"),
+                    ("S", "Klein (S)"),
+                    ("M", "Mittel (M)"),
+                    ("L", "Groß (L)"),
+                    ("XL", "Sehr groß (XL)"),
+                ],
+                default="M",
+                max_length=2,
+                verbose_name="Konfektionsgröße",
+            ),
             preserve_default=False,
         ),
     ]

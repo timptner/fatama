@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('accounts', '0003_remove_profile_university_council_and_more'),
-        ('congresses', '0003_alter_participant_contact_attendance'),
+        ("accounts", "0003_remove_profile_university_council_and_more"),
+        ("congresses", "0003_alter_participant_contact_attendance"),
     ]
 
     operations = [
         migrations.AddConstraint(
-            model_name='attendance',
-            constraint=models.UniqueConstraint(fields=('congress', 'council'), name='unique-attendance'),
+            model_name="attendance",
+            constraint=models.UniqueConstraint(
+                fields=("congress", "council"), name="unique-attendance"
+            ),
         ),
     ]

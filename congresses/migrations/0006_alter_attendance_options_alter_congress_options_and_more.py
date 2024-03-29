@@ -4,26 +4,33 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('congresses', '0005_portrait_certificate_alter_portrait_railcard'),
+        ("congresses", "0005_portrait_certificate_alter_portrait_railcard"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='attendance',
-            options={'verbose_name': 'Besuch', 'verbose_name_plural': 'Besuche'},
+            name="attendance",
+            options={"verbose_name": "Besuch", "verbose_name_plural": "Besuche"},
         ),
         migrations.AlterModelOptions(
-            name='congress',
-            options={'ordering': ['title'], 'verbose_name': 'Tagung', 'verbose_name_plural': 'Tagungen'},
+            name="congress",
+            options={
+                "ordering": ["title"],
+                "verbose_name": "Tagung",
+                "verbose_name_plural": "Tagungen",
+            },
         ),
         migrations.AlterModelOptions(
-            name='participant',
-            options={'ordering': ['first_name', 'last_name'], 'verbose_name': 'Teilnehmer', 'verbose_name_plural': 'Teilnehmer'},
+            name="participant",
+            options={
+                "ordering": ["first_name", "last_name"],
+                "verbose_name": "Teilnehmer",
+                "verbose_name_plural": "Teilnehmer",
+            },
         ),
         migrations.AlterModelOptions(
-            name='portrait',
-            options={'verbose_name': 'Porträt', 'verbose_name_plural': 'Porträts'},
+            name="portrait",
+            options={"verbose_name": "Porträt", "verbose_name_plural": "Porträts"},
         ),
     ]

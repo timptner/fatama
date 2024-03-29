@@ -4,22 +4,30 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('congresses', '0008_portrait_size'),
+        ("congresses", "0008_portrait_size"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='congress',
-            name='support_email',
-            field=models.EmailField(default='farafmb@ovgu.de', help_text='Erreichbarkeit der Organisatoren.', max_length=254, verbose_name='E-Mail-Adresse'),
+            model_name="congress",
+            name="support_email",
+            field=models.EmailField(
+                default="farafmb@ovgu.de",
+                help_text="Erreichbarkeit der Organisatoren.",
+                max_length=254,
+                verbose_name="E-Mail-Adresse",
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='congress',
-            name='support_team',
-            field=models.CharField(default='Birte, Henrik, Jana, Johanna und Jonas', help_text='Namen der Organisatoren. (Verwendung als Signatur in E-Mails.)', verbose_name='Team'),
+            model_name="congress",
+            name="support_team",
+            field=models.CharField(
+                default="Birte, Henrik, Jana, Johanna und Jonas",
+                help_text="Namen der Organisatoren. (Verwendung als Signatur in E-Mails.)",
+                verbose_name="Team",
+            ),
             preserve_default=False,
         ),
     ]

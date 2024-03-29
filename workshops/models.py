@@ -6,9 +6,9 @@ from congresses.models import Congress
 
 
 class Workshop(models.Model):
-    SUGGESTED = 'S'
-    APPROVED = 'A'
-    REJECTED = 'R'
+    SUGGESTED = "S"
+    APPROVED = "A"
+    REJECTED = "R"
     STATE_CHOICES = {
         SUGGESTED: "Vorgeschlagen",
         APPROVED: "Angenommen",
@@ -19,7 +19,9 @@ class Workshop(models.Model):
     description = models.TextField("Beschreibung")
     state = models.CharField("Status", max_length=1, choices=STATE_CHOICES)
     comment = models.TextField("Kommentar", blank=True)
-    congress = models.ForeignKey(Congress, on_delete=models.SET_NULL, blank=True, null=True)
+    congress = models.ForeignKey(
+        Congress, on_delete=models.SET_NULL, blank=True, null=True
+    )
 
     class Meta:
         verbose_name = "Seminar"
@@ -27,7 +29,7 @@ class Workshop(models.Model):
         ordering = ["title"]
         constraints = [
             CheckConstraint(
-                check=Q(state='S') | (Q(state='R') & ~Q(comment="")) | Q(state='A'),
+                check=Q(state="S") | (Q(state="R") & ~Q(comment="")) | Q(state="A"),
                 name="comment_when_rejected",
                 violation_error_message="Bei Ablehnung ist eine Begründung anzugeben.",
             ),
@@ -38,8 +40,8 @@ class Workshop(models.Model):
 
     def get_state_color(self) -> str:
         colors = {
-            Workshop.SUGGESTED: 'is-info',
-            Workshop.APPROVED: 'is-success',
-            Workshop.REJECTED: 'is-danger',
+            Workshop.SUGGESTED: "is-info",
+            Workshop.APPROVED: "is-success",
+            Workshop.REJECTED: "is-danger",
         }
         return colors[self.state]
