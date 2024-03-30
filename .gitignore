@@ -14,3 +14,4 @@ __pycache__/
 # Zed
 .zed/
 pyrightconfig.json
+pyproject.toml
