@@ -8,6 +8,7 @@ urlpatterns = [
     path("accounts/", include("accounts.urls")),
     path("admin/", admin.site.urls),
     path("congresses/", include("congresses.urls")),
+    path("excursions/", include("excursions.urls")),
     path("privacy/", views.flatpage, {"url": "/privacy/"}, name="privacy"),
     path("site-notice/", views.flatpage, {"url": "/site-notice/"}, name="site_notice"),
     path("workshops/", include("workshops.urls")),

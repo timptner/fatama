@@ -28,6 +28,7 @@ SITE_ID = 1
 INSTALLED_APPS = [
     "accounts",
     "congresses",
+    "excursions",
     "workshops",
     "fontawesomefree",
     "django.contrib.flatpages",

@@ -1,0 +1,58 @@
+{% extends "fatama/base.html" %}
+
+{% block title %}
+    {{ block.super }} | Exkursionen
+{% endblock title %}
+
+{% block content %}
+    <section class="section">
+        <div class="container is-max-desktop">
+            <h3 class="title">Exkursionen</h3>
+            <h5 class="subtitle">Liste der verfügbaren Exkursionen</h5>
+
+            <article class="message is-info">
+                <div class="message-header">
+                    <p>Prioritäten</p>
+                </div>
+                <div class="message-body">
+                    Für jede Exkursion sind die bisherigen Anmeldungen als Tag, aufgeteilt nach Priorität, einzusehen.
+                </div>
+            </article>
+
+            {% for excursion in excursion_list %}
+                <div class="block">
+                    <h4 class="title is-5 mb-2">{{ excursion.title }}</h4>
+
+                    <div class="field is-grouped is-grouped-multiline">
+                        <div class="control">
+                            <div class="tags has-addons">
+                                <span class="tag is-success">Prio 1</span>
+                                <span class="tag">{{ excursion.prio1 }}</span>
+                            </div>
+                        </div>
+
+                        <div class="control">
+                            <div class="tags has-addons">
+                                <span class="tag is-warning">Prio 2</span>
+                                <span class="tag">{{ excursion.prio2 }}</span>
+                            </div>
+                        </div>
+
+                        <div class="control">
+                            <div class="tags has-addons">
+                                <span class="tag is-danger">Prio 3</span>
+                                <span class="tag">{{ excursion.prio3 }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p>{{ excursion.desc }}</p>
+                </div>
+            {% empty %}
+                <article class="message is-info">
+                    <div class="message-body">Es wurden noch keine Exkursionen erstellt.</div>
+                </article>
+            {% endfor %}
+        </div>
+    </section>
+{% endblock content %}
