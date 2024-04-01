@@ -1,0 +1,9 @@
+{{ formset.management_form }}
+
+{% if formset.non_form_errors %}<div class="notification is-danger">{{ formset.non_form_errors }}</div>{% endif %}
+
+{% for form in formset %}
+    <fieldset>
+        {{ form }}
+    </fieldset>
+{% endfor %}

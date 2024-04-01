@@ -1,0 +1,40 @@
+{% extends "fatama/base.html" %}
+
+{% block title %}
+    {{ block.super }} | Anmeldung zu Exkursionen
+{% endblock title %}
+
+{% block content %}
+    <section class="section">
+        <div class="container is-max-desktop">
+            <h3 class="title">Anmeldung zu Exkursionen</h3>
+            <h5 class="subtitle">{{ participant }}</h5>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <fieldset class="is-hidden">
+                    {{ formset.management_form }}
+                </fieldset>
+
+                {% if formset.non_form_errors %}<div class="notification is-danger">{{ formset.non_form_errors }}</div>{% endif %}
+
+                {% for form in formset %}
+                    <fieldset>
+                        {{ form }}
+                    </fieldset>
+                {% endfor %}
+
+                <div class="field is-grouped mt-3">
+                    <div class="control">
+                        <button type="submit" class="button is-success">Erstellen</button>
+                    </div>
+                    <div class="control">
+                        <a class="button is-danger"
+                           href="{% url 'congresses:attendance_detail' participant.attendance.pk %}">Abbrechen</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock content %}

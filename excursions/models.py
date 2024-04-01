@@ -31,5 +31,5 @@ class Order(models.Model):
         verbose_name_plural = "Bestellungen"
         ordering = ["excursion", "participant", "-priority"]
         constraints = [
-            models.UniqueConstraint(fields=["excursion", "participant", "priority"], name="unique_order"),
+            models.UniqueConstraint(fields=["excursion", "participant"], name="unique_order"),
         ]

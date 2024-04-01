@@ -19,6 +19,22 @@
                 </div>
             </article>
 
+            {% if attendance %}
+                <article class="message is-link">
+                    <div class="message-header">
+                        <p>Anmeldung</p>
+                    </div>
+                    <div class="message-body">
+                        <p class="block">Die Anmeldung zu einer Exkursion kannst du über die Detail-Ansicht zur Teilnahme vornehmen.</p>
+
+                        <div class="block">
+                            <a class="button is-link"
+                               href="{% url 'congresses:attendance_detail' attendance.pk %}">Zur Ansicht</a>
+                        </div>
+                    </div>
+                </article>
+            {% endif %}
+
             {% for excursion in excursion_list %}
                 <div class="block">
                     <h4 class="title is-5 mb-2">{{ excursion.title }}</h4>

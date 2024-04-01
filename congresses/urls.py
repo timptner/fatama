@@ -1,6 +1,7 @@
 from django.urls import path
 
 from congresses import views
+from excursions.views import create_order
 
 app_name = "congresses"
 urlpatterns = [
@@ -31,5 +32,6 @@ urlpatterns = [
         views.PortraitCreateView.as_view(),
         name="create_portrait",
     ),
+    path("participants/<int:pk>/add_excursion/", create_order, name="create_order"),
     path("update_seats/", views.SeatFormView.as_view(), name="update_seats"),
 ]
