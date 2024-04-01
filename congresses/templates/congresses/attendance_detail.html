@@ -169,18 +169,29 @@
                                         </p>
                                     {% endwith %}
                                 {% else %}
-                                    <p class="is-italic">Kein Portrait vorhanden</p>
-                                {% endif %}
-                                {% if participant.order_set.count > 0 %}
                                     <p>
                                         <span class="icon-text">
-                                            <span class="icon has-text-success">
-                                                <i class="fa-solid fa-circle-check"></i>
+                                            <span class="icon">
+                                                <i class="fa-solid fa-xmark"></i>
                                             </span>
-                                            <span>Exkursion</span>
+                                            <span>Kein Portrait vorhanden</span>
                                         </span>
                                     </p>
                                 {% endif %}
+                                <p>
+                                    <span class="icon-text">
+                                        {% if participant.order_set.count > 0 %}
+                                            <span class="icon has-text-success">
+                                                <i class="fa-solid fa-circle-check"></i>
+                                            </span>
+                                        {% else %}
+                                            <span class="icon has-text-danger">
+                                                <i class="fa-solid fa-circle-xmark"></i>
+                                            </span>
+                                        {% endif %}
+                                        <span>Exkursion</span>
+                                    </span>
+                                </p>
                             </div>
                             <footer class="card-footer">
                                 {% if not participant.portrait %}
