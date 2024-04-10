@@ -1,5 +1,7 @@
 {% extends 'fatama/base.html' %}
 
+{% load markdown %}
+
 {% block title %}
     {{ block.super }} | Seminare
 {% endblock %}
@@ -34,7 +36,11 @@
                 </div>
 
                 <p class="has-text-weight-bold">{{ workshop }}</p>
-                <p>{{ workshop.description }}</p>
+
+                <div class="content">
+                    {% render workshop.description %}
+                </div>
+
                 {% if workshop.comment %}
                     <p class="help is-danger">{{ workshop.comment }}</p>
                 {% endif %}

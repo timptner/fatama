@@ -2,6 +2,8 @@ from django.db import models
 from django.db.models import constraints
 
 from congresses.models import Congress, Participant
+from fatama.templatetags.markdown import help_text
+
 
 class Excursion(models.Model):
     congress = models.ForeignKey(Congress, on_delete=models.CASCADE)
@@ -9,9 +11,7 @@ class Excursion(models.Model):
     url = models.URLField("Webadresse", blank=True)
     desc = models.TextField(
         "Beschreibung",
-        help_text=(
-            "Verwende <a target=\"_blank\" href=\"https://www.markdownguide.org/cheat-sheet/\">Markdown</a> zur Formatierung."
-        ),
+        help_text=help_text,
     )
 
     class Meta:

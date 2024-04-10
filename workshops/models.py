@@ -3,6 +3,7 @@ from django.db.models import CheckConstraint, Q
 
 from accounts.models import User
 from congresses.models import Congress
+from fatama.templatetags.markdown import help_text
 
 
 class Workshop(models.Model):
@@ -21,7 +22,7 @@ class Workshop(models.Model):
         help_text="Die Redeleitung für diesen Workshop übernehmen.",
     )
     title = models.CharField("Titel", max_length=200, unique=True)
-    description = models.TextField("Beschreibung")
+    description = models.TextField("Beschreibung", help_text=help_text)
     state = models.CharField("Status", max_length=1, choices=STATE_CHOICES)
     comment = models.TextField("Kommentar", blank=True)
     congress = models.ForeignKey(
