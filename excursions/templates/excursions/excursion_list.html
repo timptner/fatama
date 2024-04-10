@@ -1,5 +1,7 @@
 {% extends "fatama/base.html" %}
 
+{% load markdown %}
+
 {% block title %}
     {{ block.super }} | Exkursionen
 {% endblock title %}
@@ -15,7 +17,8 @@
                     <p>Prioritäten</p>
                 </div>
                 <div class="message-body">
-                    Für jede Exkursion sind die bisherigen Anmeldungen als Tag, aufgeteilt nach Priorität, einzusehen.
+                    Für jede Exkursion sind die bisherigen Anmeldungen als Tag,
+                    aufgeteilt nach Priorität, einzusehen.
                 </div>
             </article>
 
@@ -25,7 +28,10 @@
                         <p>Anmeldung</p>
                     </div>
                     <div class="message-body">
-                        <p class="block">Die Anmeldung zu einer Exkursion kannst du über die Detail-Ansicht zur Teilnahme vornehmen.</p>
+                        <p class="block">
+                            Die Anmeldung zu einer Exkursion kannst du über die
+                            Detail-Ansicht zur Teilnahme vornehmen.
+                        </p>
 
                         <div class="block">
                             <a class="button is-link"
@@ -62,7 +68,7 @@
                         </div>
                     </div>
 
-                    <p>{{ excursion.desc }}</p>
+                    <div class="content">{% render excursion.desc %}</div>
                 </div>
             {% empty %}
                 <article class="message is-info">
