@@ -19,7 +19,9 @@ class Excursion(models.Model):
         verbose_name_plural = "Exkursionen"
         ordering = ["title"]
         constraints = [
-            models.UniqueConstraint(fields=["congress", "title"], name="unique_excursion"),
+            models.UniqueConstraint(
+                fields=["congress", "title"], name="unique_excursion"
+            ),
         ]
 
     def __str__(self) -> str:
@@ -37,5 +39,7 @@ class Order(models.Model):
         verbose_name_plural = "Bestellungen"
         ordering = ["excursion", "participant", "-priority"]
         constraints = [
-            models.UniqueConstraint(fields=["excursion", "participant"], name="unique_order"),
+            models.UniqueConstraint(
+                fields=["excursion", "participant"], name="unique_order"
+            ),
         ]
