@@ -21,9 +21,10 @@ class WorkshopForm(ModelForm):
             "is_leader": None,
         }
 
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, user, congress, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.user = user
+        self.congress = congress
 
     def save(self, commit: bool = True):
         workshop = super().save(commit=False)
