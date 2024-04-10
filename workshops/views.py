@@ -3,6 +3,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, ListView
 
+from congresses.models import Congress
 from workshops.forms import WorkshopForm
 from workshops.models import Workshop
 
@@ -15,7 +16,8 @@ class WorkshopCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs.update({"user": self.request.user})
+        congress = Congress.objects.order_by("-year").first()
+        kwargs.update({"user": self.request.user, "congress": congress})
         return kwargs
 
 
