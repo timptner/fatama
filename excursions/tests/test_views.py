@@ -23,7 +23,9 @@ class ExcursionListView(TestCase):
 
     def test_attendant_view(self) -> None:
         user = User.objects.create(username="jane")
-        council = Council.objects.create(university="University", name="Student Council", owner=user)
+        council = Council.objects.create(
+            university="University", name="Student Council", owner=user
+        )
         congress = Congress.objects.create(title="Congress", year=2024)
         attendance = Attendance.objects.create(congress=congress, council=council)
         self.client.force_login(user)
@@ -38,8 +40,10 @@ class CreateOrderViewTest(TestCase):
         council = Council.objects.create(owner=self.user)
         self.congress = Congress.objects.create(year=2024)
         attendance = Attendance.objects.create(congress=self.congress, council=council)
-        participant = Participant.objects.create(first_name="John", last_name="Doe", attendance=attendance)
-        self.path = reverse("congresses:create_order", kwargs={"pk": attendance.pk})
+        participant = Participant.objects.create(
+            first_name="John", last_name="Doe", attendance=attendance
+        )
+        self.path = reverse("congresses:create_order", kwargs={"pk": participant.pk})
 
     def test_public_view(self) -> None:
         response = self.client.get(self.path)

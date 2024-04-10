@@ -13,5 +13,5 @@ class WorkshopFormTest(TestCase):
             "title": "Foo",
             "description": "Bar",
         }
-        form = WorkshopForm(data=data, user=self.user)
+        form = WorkshopForm(data=data, user=self.user, congress=None)
         self.assertTrue(form.is_valid())
