@@ -6,6 +6,7 @@ from congresses.models import Congress, Participant
 class Excursion(models.Model):
     congress = models.ForeignKey(Congress, on_delete=models.CASCADE)
     title = models.CharField("Titel", max_length=200)
+    url = models.URLField("Webadresse", blank=True)
     desc = models.TextField(
         "Beschreibung",
         help_text=(

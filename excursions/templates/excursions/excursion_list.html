@@ -69,6 +69,15 @@
                     </div>
 
                     <div class="content">{% render excursion.desc %}</div>
+
+                    {% if excursion.url %}
+                        <a class="button is-small" href="{{ excursion.url }}" target="_blank">
+                            <span>Weitere Informationen</span>
+                            <span class="icon">
+                                <i class="fa-solid fa-up-right-from-square"></i>
+                            </span>
+                        </a>
+                    {% endif %}
                 </div>
             {% empty %}
                 <article class="message is-info">
