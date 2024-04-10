@@ -1,6 +1,6 @@
 from django import forms
 
-from fatama.forms import ModelForm, CheckboxInput
+from fatama.forms import ModelForm, RadioSelect
 from workshops.models import Workshop
 
 
@@ -11,14 +11,7 @@ class WorkshopForm(ModelForm):
         widgets = {
             "title": forms.TextInput(attrs={"class": "input"}),
             "description": forms.Textarea(attrs={"class": "textarea"}),
-            "is_leader": CheckboxInput(
-                attrs={
-                    "label": "Ich werde die Redeleitung für diesen Workshop übernehmen."
-                }
-            ),
-        }
-        help_texts = {
-            "is_leader": None,
+            "is_leader": RadioSelect(choices=[(True, "Ja"), (False, "Nein")]),
         }
 
     def __init__(self, user, congress, *args, **kwargs):

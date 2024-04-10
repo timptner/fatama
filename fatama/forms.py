@@ -25,3 +25,8 @@ class FileInput(forms.FileInput):
 
 class CheckboxInput(forms.CheckboxInput):
     template_name = "fatama/forms/widgets/checkbox.html"
+
+
+class RadioSelect(forms.RadioSelect):
+    template_name = "fatama/forms/widgets/radio.html"
+    option_template_name = "fatama/forms/widgets/radio_option.html"
