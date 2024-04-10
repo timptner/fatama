@@ -30,6 +30,7 @@ class WorkshopForm(ModelForm):
         workshop = super().save(commit=False)
         workshop.state = Workshop.SUGGESTED
         workshop.author = self.user
+        workshop.congress = self.congress
         if commit:
             workshop.save()
         return workshop
