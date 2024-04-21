@@ -13,25 +13,27 @@ from excursions.forms import OrderFormSet
 from excursions.models import Excursion, Order
 
 
-class ExcursionListView(LoginRequiredMixin, ListView):
+class ExcursionListView(ListView):
     model = Excursion
 
     def get_queryset(self):
         congress = Congress.objects.order_by("-year").first()
         queryset = (
             Excursion.objects.filter(congress=congress)
-                .annotate(prio1=Count("order", filter=Q(order__priority=1)))
-                .annotate(prio2=Count("order", filter=Q(order__priority=2)))
-                .annotate(prio3=Count("order", filter=Q(order__priority=3)))
+            .annotate(prio1=Count("order", filter=Q(order__priority=1)))
+            .annotate(prio2=Count("order", filter=Q(order__priority=2)))
+            .annotate(prio3=Count("order", filter=Q(order__priority=3)))
         )
         return queryset
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        try:
-            attendance = Attendance.objects.get(council__owner=self.request.user)
-        except Attendance.DoesNotExist:
-            attendance = None
+        attendance = None
+        if self.request.user.is_authenticated:
+            try:
+                attendance = Attendance.objects.get(council__owner=self.request.user)
+            except Attendance.DoesNotExist:
+                pass
         context["attendance"] = attendance
         return context
 
@@ -47,8 +49,12 @@ def create_order(request, pk):
         if formset.is_valid():
             for form in formset:
                 form.save()
-            messages.success(request, f"Exkursion für <strong>{participant}</strong> erstellt.")
-            return redirect("congresses:attendance_detail", pk=participant.attendance.pk)
+            messages.success(
+                request, f"Exkursion für <strong>{participant}</strong> erstellt."
+            )
+            return redirect(
+                "congresses:attendance_detail", pk=participant.attendance.pk
+            )
     else:
         formset = OrderFormSet(form_kwargs={"participant": participant})
 

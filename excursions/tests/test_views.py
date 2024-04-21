@@ -13,8 +13,7 @@ class ExcursionListView(TestCase):
 
     def test_public_view(self) -> None:
         response = self.client.get(self.path)
-        path = reverse("accounts:login")
-        self.assertRedirects(response, f"{path}?next={self.path}")
+        self.assertContains(response, "Exkursionen")
 
     def test_user_view(self) -> None:
         self.client.force_login(self.user)

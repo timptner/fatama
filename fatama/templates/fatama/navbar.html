@@ -11,25 +11,25 @@
         </div>
 
         <div id="mainNavbar" class="navbar-menu">
-            {% if user.is_authenticated %}
             <div class="navbar-start">
-                {% if the_congress %}
-                    <a class="navbar-item" href="{% url 'congresses:congress_detail' the_congress.year %}">Tagung</a>
-                {% else %}
-                    <div class="navbar-item has-text-grey-light">
-                        <p class="icon-text">
-                            <span class="icon">
-                                <i class="fa-solid fa-lock"></i>
-                            </span>
-                            <span>Tagung</span>
-                        </p>
-                    </div>
+                {% if user.is_authenticated %}
+                    {% if the_congress %}
+                        <a class="navbar-item" href="{% url 'congresses:congress_detail' the_congress.year %}">Tagung</a>
+                    {% else %}
+                        <div class="navbar-item has-text-grey-light">
+                            <p class="icon-text">
+                                <span class="icon">
+                                    <i class="fa-solid fa-lock"></i>
+                                </span>
+                                <span>Tagung</span>
+                            </p>
+                        </div>
+                    {% endif %}
+                    <a class="navbar-item" href="{% url 'accounts:council_list' %}">Gremien</a>
+                    <a class="navbar-item" href="{% url 'workshops:workshop_list' %}">Seminare</a>
                 {% endif %}
-                <a class="navbar-item" href="{% url 'accounts:council_list' %}">Gremien</a>
-                <a class="navbar-item" href="{% url 'workshops:workshop_list' %}">Seminare</a>
                 <a class="navbar-item" href="{% url 'excursions:excursion_list' %}">Exkursionen</a>
             </div>
-            {% endif %}
             <div class="navbar-end">
                 {% if user.is_authenticated %}
                     <a class="navbar-item" href="{% url 'accounts:profile' %}">Konto</a>
