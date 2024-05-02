@@ -29,6 +29,12 @@
                     <a class="navbar-item" href="{% url 'workshops:workshop_list' %}">Seminare</a>
                 {% endif %}
                 <a class="navbar-item" href="{% url 'excursions:excursion_list' %}">Exkursionen</a>
+                <a class="navbar-item" target="_blank" href="https://wiki.fatama2024.de">
+                    <span>Wiki</span>
+                    <span class="icon">
+                        <i class="fa-solid fa-arrow-up-right-from-square fa-sm"></i>
+                    </span>
+                </a>
             </div>
             <div class="navbar-end">
                 {% if user.is_authenticated %}
